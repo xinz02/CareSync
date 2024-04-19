@@ -80,30 +80,23 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 248, 240, 238),
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: const Color.fromARGB(
-            255, 248, 240, 238), //Theme.of(context).colorScheme.secondary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
+          // TRY THIS: Try changing the color here to a specific color (to
+          // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
+          // change color while the other colors stay the same.
+          backgroundColor: const Color.fromARGB(
+              255, 248, 240, 238), //Theme.of(context).colorScheme.secondary,
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
 
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
-          onPressed: () {
-            setState(() {
-              // Handle onPressed action here if needed
-            });
-          },
-        ),
-        title: Text(
-          "Your Cart",
-          textAlign: TextAlign.center,
-        ),
-        //   title: Padding(
-        //       padding: const EdgeInsets.only(left: 75.0),
-        //       child: Text("Your Cart")),
-      ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () {
+              setState(() {
+                // Handle onPressed action here if needed
+              });
+            },
+          ),
+          title: Text(widget.title)),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
