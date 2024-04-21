@@ -4,37 +4,46 @@ import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onlyu_cafe/home.dart';
 import 'package:onlyu_cafe/service/database.dart';
+import 'package:flutter/services.dart';
 
-class AuthMethods{
-  final FirebaseAuth auth=FirebaseAuth.instance;
+class AuthMethods {
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
-  getCurrentUser()async{
-    return auth.currentUser;
+  getCurrentUser() async {
+    return await auth.currentUser;
   }
 
-  signInWithGoogle(context)async{
-    final FirebaseAuth firebaseAuth=FirebaseAuth.instance;
-    final GoogleSignIn googleSignIn=GoogleSignIn();
+  signInWithGoogle(BuildContext context) async {
+    final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    final GoogleSignIn googleSignIn = GoogleSignIn();
 
-    final GoogleSignInAccount?googleSignInAccount=await googleSignIn.signIn();
-    final GoogleSignInAuthentication?googleSignInAuthentication=await googleSignInAccount?.authentication;
+    final GoogleSignInAccount? googleSignInAccount =
+        await googleSignIn.signIn();
 
-    final AuthCredential credential=GoogleAuthProvider.credential(
-      idToken: googleSignInAuthentication?.idToken,
-      accessToken: googleSignInAuthentication?.accessToken
-    );
+    final GoogleSignInAuthentication? googleSignInAuthentication =
+        await googleSignInAccount?.authentication;
 
-    UserCredential result=await firebaseAuth.signInWithCredential(credential);
+    final AuthCredential credential = GoogleAuthProvider.credential(
+        idToken: googleSignInAuthentication?.idToken,
+        accessToken: googleSignInAuthentication?.accessToken);
 
-    User? userDetails=result.user;
+    UserCredential result = await firebaseAuth.signInWithCredential(credential);
 
-    Map<String,dynamic> userInfoMap={
-      "email": userDetails!.email,
-      "name": userDetails.displayName,
-      "imgUrl": userDetails.photoURL,
-      "id": userDetails.uid
-    };
-    await DatabaseMethods().addUser(userDetails.uid, userInfoMap).then((value){});
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>const Home()));
+    User? userDetails = result.user;
+
+    if (result != null) {
+      Map<String, dynamic> userInfoMap = {
+        "email": userDetails!.email,
+        "name": userDetails.displayName,
+        "imgUrl": userDetails.photoURL,
+        "id": userDetails.uid
+      };
+      await DatabaseMethods()
+          .addUser(userDetails.uid, userInfoMap)
+          .then((value) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Home()));
+      });
     }
+  }
 }
