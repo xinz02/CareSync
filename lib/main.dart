@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:onlyu_cafe/firebase_options.dart';
 import 'package:onlyu_cafe/router/router.dart';
+import 'package:onlyu_cafe/signup.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -64,7 +65,12 @@ class HomePage extends StatelessWidget {
                 onPressed: () {
                   context.push("/cart");
                 },
-                child: const Text("Cart"))
+                child: const Text("Cart")),
+            ElevatedButton(
+                onPressed: () {
+                  context.push("/signup");
+                },
+                child: const Text("Sign Up"))
           ],
         ),
       ),
