@@ -1,18 +1,46 @@
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.2.0' // Replace with your actual Android tools version
+        classpath 'com.google.gms:google-services:4.4.1' // Replace with your actual Google services version
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.8"
+    }
+}
+
 allprojects {
     repositories {
         google()
-        mavenCentral()
+        jcenter()
     }
 }
 
 rootProject.buildDir = '../build'
+
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
     project.evaluationDependsOn(':app')
 }
 
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
+}
+
+// Add the Google Services plugin configuration within the app module
+project(':app') {
+    apply plugin: 'com.android.application'
+    apply plugin: 'kotlin-android'
+    apply plugin: 'dev.flutter.flutter-gradle-plugin'
+    
+    android {
+        // Android configurations...
+        
+        dependencies {
+            // Other dependencies...
+            implementation "com.google.gms:google-services:4.4.1"
+        }
+    }
 }
