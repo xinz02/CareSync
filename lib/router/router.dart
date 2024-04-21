@@ -4,7 +4,7 @@ import 'package:onlyu_cafe/main.dart';
 
 GoRouter goRouter() {
   return GoRouter(initialLocation: '/home', routes: <RouteBase>[
-    GoRoute(path: '/home', builder: ((context, state) => const HomePage())),
+    GoRoute(path: '/home', builder: ((context, state) => const MyHomePage())),
     GoRoute(
         path: '/donothing',
         builder: ((context, state) => const DoNothingPage())),
