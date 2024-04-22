@@ -5,7 +5,7 @@ import 'package:onlyu_cafe/login.dart';
 import 'package:onlyu_cafe/service/auth.dart';
 
 class SignUp extends StatefulWidget {
-  const SignUp({super.key});
+  const SignUp({Key? key}) : super(key: key);
 
   @override
   _SignUpState createState() => _SignUpState();
@@ -20,12 +20,11 @@ class _SignUpState extends State<SignUp> {
   final _formkey = GlobalKey<FormState>();
 
   registration() async {
-    if (nameController.text != "" &&
-        emailController != "") {
+    if (nameController.text != "" && emailController.text != "") {
       try {
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(
-                email: email, password: password);
+                email: emailController.text, password: password);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text(
           "Registered Successfully",
@@ -37,14 +36,12 @@ class _SignUpState extends State<SignUp> {
         );
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
-          backgroundColor: Colors.orangeAccent;
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text(
             "Password entered is weak",
             style: TextStyle(fontSize: 20.0),
           )));
         } else if (e.code == "email-already-in-use") {
-          backgroundColor: Colors.orangeAccent;
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text(
             "Email already exists",
