@@ -5,7 +5,7 @@ import 'package:onlyu_cafe/signup.dart';
 
 GoRouter goRouter() {
   return GoRouter(initialLocation: '/home', routes: <RouteBase>[
-    GoRoute(path: '/home', builder: ((context, state) => const HomePage())),
+    GoRoute(path: '/home', builder: ((context, state) => const MyHomePage())),
     GoRoute(
         path: '/donothing',
         builder: ((context, state) => const DoNothingPage())),
