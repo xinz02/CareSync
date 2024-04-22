@@ -20,12 +20,10 @@ class _SignUpState extends State<SignUp> {
   final _formkey = GlobalKey<FormState>();
 
   registration() async {
-    if (nameController.text != "" &&
-        emailController != "") {
+    if (nameController.text != "" && emailController != "") {
       try {
         UserCredential userCredential = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
-                email: email, password: password);
+            .createUserWithEmailAndPassword(email: email, password: password);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text(
           "Registered Successfully",
@@ -37,14 +35,16 @@ class _SignUpState extends State<SignUp> {
         );
       } on FirebaseAuthException catch (e) {
         if (e.code == 'weak-password') {
-          backgroundColor: Colors.orangeAccent;
+          backgroundColor:
+          Colors.orangeAccent;
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text(
             "Password entered is weak",
             style: TextStyle(fontSize: 20.0),
           )));
         } else if (e.code == "email-already-in-use") {
-          backgroundColor: Colors.orangeAccent;
+          backgroundColor:
+          Colors.orangeAccent;
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text(
             "Email already exists",
