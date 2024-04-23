@@ -1,7 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:onlyu_cafe/firebase_options.dart';
+import 'package:onlyu_cafe/user_management/firebase_options.dart';
 import 'package:onlyu_cafe/router/router.dart';
 
 void main() async {

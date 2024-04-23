@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:onlyu_cafe/home.dart';
-import 'package:onlyu_cafe/forgot_password.dart';
+import 'package:onlyu_cafe/user_management/forgot_password.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -18,8 +18,6 @@ class _LoginState extends State<Login> {
   TextEditingController passwordController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-
-
 
   void userLogin() async {
     try {
@@ -104,13 +102,17 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                  GestureDetector(
+                GestureDetector(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       TextButton(
                         onPressed: () {
-                          Navigator.push(context,MaterialPageRoute(builder:(context)=>const ForgotPassword()));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ForgotPassword()));
                         },
                         child: const Text('Forgot Password?'),
                       ),

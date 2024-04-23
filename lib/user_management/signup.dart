@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:onlyu_cafe/home.dart';
-import 'package:onlyu_cafe/login.dart';
+import 'package:onlyu_cafe/user_management/login.dart';
 import 'package:onlyu_cafe/service/auth.dart';
 
 class SignUp extends StatefulWidget {

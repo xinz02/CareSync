@@ -1,7 +1,7 @@
 import 'package:go_router/go_router.dart';
-import 'package:onlyu_cafe/cart.dart';
+import 'package:onlyu_cafe/cart/cart.dart';
 import 'package:onlyu_cafe/main.dart';
-import 'package:onlyu_cafe/signup.dart';
+import 'package:onlyu_cafe/user_management/signup.dart';
 
 GoRouter goRouter() {
   return GoRouter(initialLocation: '/home', routes: <RouteBase>[
