@@ -1,8 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:onlyu_cafe/home.dart';
 import 'package:onlyu_cafe/user_management/firebase_options.dart';
 import 'package:onlyu_cafe/router/router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +35,57 @@ class MyApp extends StatelessWidget {
   }
 }
 
+class NavigationBarExample extends StatefulWidget {
+  const NavigationBarExample({super.key});
+
+  @override
+  _NavigationBarExampleState createState() => _NavigationBarExampleState();
+}
+
+class _NavigationBarExampleState extends State<NavigationBarExample> {
+  int _selectedIndex = 0;
+
+  void _onDestinationSelected(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  final List<Widget> _pages = [
+    const HomePage(),
+    const MenuPage(),
+    const DoNothingPage(),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Only U Cafe',
+          style: GoogleFonts.kaushanScript(),
+        ),
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 229, 202, 195),
+      ),
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: NavigationBar(
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.home), label: "Home"),
+          NavigationDestination(icon: Icon(Icons.menu_book), label: "Menu"),
+          NavigationDestination(icon: Icon(Icons.person), label: "Profile"),
+        ],
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: _onDestinationSelected,
+        indicatorColor: const Color.fromARGB(255, 229, 202, 195),
+        animationDuration: const Duration(milliseconds: 1000),
+        backgroundColor: Colors.white10,
+        shadowColor: Colors.white30,
+      ),
+    );
+  }
+}
+
 class MenuPage extends StatelessWidget {
   const MenuPage({super.key});
 
@@ -40,34 +93,17 @@ class MenuPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 248, 240, 238),
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 229, 202, 195),
-        title: const Text("Home Page",
-            style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.black)),
-        centerTitle: true,
-      ),
       body: Center(
+        // child: Text("Menu Page"),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
-                onPressed: () {
-                  context.push("/donothing");
-                },
-                child: const Text("DoNothing")),
-            ElevatedButton(
-                onPressed: () {
-                  context.push("/cart");
-                },
-                child: const Text("Cart")),
-            ElevatedButton(
-                onPressed: () {
-                  context.push("/signup");
-                },
-                child: const Text("Sign Up"))
+              onPressed: () {
+                context.push("/signup");
+              },
+              child: const Text("Sign Up"),
+            )
           ],
         ),
       ),
@@ -82,21 +118,19 @@ class DoNothingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 248, 240, 238),
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 229, 202, 195),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: const Text("Do Nothing Page",
-            style: TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.black)),
-        centerTitle: true,
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: const Color.fromARGB(255, 229, 202, 195),
+      //   leading: IconButton(
+      //     icon: const Icon(Icons.arrow_back),
+      //     onPressed: () {},
+      //   ),
+      //   title: const Text("Do Nothing Page",
+      //       style: TextStyle(
+      //           fontSize: 20.0,
+      //           fontWeight: FontWeight.bold,
+      //           color: Colors.black)),
+      //   centerTitle: true,
+      // ),
       body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
