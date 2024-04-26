@@ -54,6 +54,7 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Login'),
       ),
       body: Padding(
@@ -116,6 +117,16 @@ class _LoginState extends State<Login> {
                 child: const Text('Login'),
               ),
               const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SignUp()),
+                  );
+                },
+                child: const Text('Sign Up with Email'),
+              ),
+              const SizedBox(height: 20),
               GestureDetector(
                 onTap: () {
                   AuthMethods().signInWithGoogle(context);
@@ -136,16 +147,7 @@ class _LoginState extends State<Login> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const SignUp()),
-                  );
-                },
-                child: const Text('Sign Up with Email'),
-              ),
+
             ],
           ),
         ),
