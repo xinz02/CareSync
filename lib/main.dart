@@ -53,7 +53,6 @@ class _NavigationBarExampleState extends State<NavigationBarExample> {
 
   final List<Widget> _pages = [
     const HomePage(),
-    const MenuPage(),
     const DoNothingPage(),
   ];
 

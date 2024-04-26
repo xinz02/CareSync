@@ -7,8 +7,10 @@ import 'package:onlyu_cafe/service/database.dart';
 class AuthMethods {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
+  Stream<User?> Function() get authStateChanges => auth.authStateChanges;
+
   getCurrentUser() async {
-    return await auth.currentUser;
+    return auth.currentUser;
   }
 
   signInWithGoogle(BuildContext context) async {
@@ -33,7 +35,7 @@ class AuthMethods {
       Map<String, dynamic> userInfoMap = {
         "email": userDetails!.email,
         "name": userDetails.displayName,
-        "imgUrl": userDetails.photoURL,
+        "imgUrl": userDetails.photoURL??"",
         "id": userDetails.uid
       };
       await DatabaseMethods()
@@ -43,5 +45,10 @@ class AuthMethods {
             context, MaterialPageRoute(builder: (context) => const HomePage()));
       });
     }
+  }
+
+  Future<void> signOut() async{
+    final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    await firebaseAuth.signOut();
   }
 }
