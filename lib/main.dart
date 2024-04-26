@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:onlyu_cafe/home.dart';
 import 'package:onlyu_cafe/user_management/firebase_options.dart';
+import 'package:onlyu_cafe/user_management/profile.dart';
 import 'package:onlyu_cafe/router/router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -53,8 +54,8 @@ class NavigationBarExampleState extends State<NavigationBarExample> {
 
   final List<Widget> _pages = [
     const HomePage(),
-    const MenuPage(),
     const DoNothingPage(),
+    const ProfilePage()
   ];
 
   @override

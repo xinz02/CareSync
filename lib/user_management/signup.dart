@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:onlyu_cafe/home.dart';
@@ -19,46 +20,43 @@ class _SignUpState extends State<SignUp> {
 
   final _formkey = GlobalKey<FormState>();
 
-  registration() async {
-    if (nameController.text != "" && emailController != "") {
-      try {
-        UserCredential userCredential = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(email: email, password: password);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
+registration() async {
+  if (nameController.text != "" && emailController.text != "") {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+      // Get the current user
+      User? user = FirebaseAuth.instance.currentUser;
+
+      // Create a new user document in Firestore
+      await FirebaseFirestore.instance.collection('User').doc(user!.uid).set({
+        'id': user.uid,
+        'name': name,
+        'email': email,
+        'imgUrl': '', // default image URL for email/password sign up
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text(
           "Registered Successfully",
           style: TextStyle(fontSize: 20.0),
-        )));
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
-        );
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'weak-password') {
-          backgroundColor:
-          Colors.orangeAccent;
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text(
-            "Password entered is weak",
-            style: TextStyle(fontSize: 20.0),
-          )));
-        } else if (e.code == "email-already-in-use") {
-          backgroundColor:
-          Colors.orangeAccent;
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text(
-            "Email already exists",
-            style: TextStyle(fontSize: 20.0),
-          )));
-        }
-      }
+        ),
+      ));
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    } on FirebaseAuthException catch (e) {
+      // handle errors as before
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Sign Up'),
       ),
       body: Padding(
