@@ -4,6 +4,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:onlyu_cafe/service/auth.dart';
 import 'package:onlyu_cafe/user_management/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:onlyu_cafe/user_management/signup.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -54,19 +55,40 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Hello, $_username"), // Display the username
-            
-            ElevatedButton(
-              onPressed: () async {
-                AuthMethods().signOut();
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const Login()));
-              },
-              child: Text("Logout"),
-              
-            ),
+            _auth.currentUser == null
+                ? ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SignUp(),
+                        ),
+                      );
+                    },
+                    child: Text("Sign Up/Login"),
+                  )
+                : Container(),
+            SizedBox(height: 20),
+            _auth.currentUser != null
+                ? Column(
+                    children: [
+                      Text("Hello, $_username"), 
+                      ElevatedButton(
+                        onPressed: () async {
+                          AuthMethods().signOut();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Login(),
+                            ),
+                          );
+                        },
+                        child: Text("Logout"),
+                      ),
+                    ],
+                  )
+                : Container(),
           ],
-          
         ),
       ),
     );
