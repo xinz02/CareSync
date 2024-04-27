@@ -15,11 +15,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-<<<<<<<<< Temporary merge branch 1
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  String _username = '';
+  String _username = 'guest';
 
   @override
   void initState() {
@@ -27,80 +26,49 @@ class _HomePageState extends State<HomePage> {
     _getUserData();
   }
 
+  bool isAuthenticated() {
+    // Check if there's a user logged in
+    return FirebaseAuth.instance.currentUser != null;
+  }
+
+  void checkLogin() {
+    if (!isAuthenticated()) {
+      context.go("/login");
+      _getUserData();
+      // context.push("/main");
+    } else {
+      context.go("/menu");
+    }
+  }
+
   Future<void> _getUserData() async {
     final User? user = _auth.currentUser;
 
     if (user != null) {
-      final DocumentSnapshot userData = await _firestore
-          .collection('User')
-          .doc(user.uid)
-          .get();
+      final DocumentSnapshot userData =
+          await _firestore.collection('User').doc(user.uid).get();
 
       if (userData.exists) {
         final String name = userData.get('name');
-        setState(() { // Update the _username variable
+        setState(() {
+          // Update the _username variable
           _username = name;
         });
       } else {
         print('User data not found');
       }
     } else {
+      setState(() {
+        // Update the _username variable
+        _username = 'guest';
+      });
       print('User not logged in');
     }
   }
-=========
-  void _doNothing() {}
->>>>>>>>> Temporary merge branch 2
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-<<<<<<<<< Temporary merge branch 1
-      backgroundColor: Color.fromARGB(255, 248, 240, 238),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _auth.currentUser == null
-                ? ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SignUp(),
-                        ),
-                      );
-                    },
-                    child: Text("Sign Up/Login"),
-                  )
-                : Container(),
-            SizedBox(height: 20),
-            _auth.currentUser != null
-                ? Column(
-                    children: [
-                      Text("Hello, $_username"), 
-                      ElevatedButton(
-                        onPressed: () async {
-                          AuthMethods().signOut();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const Login(),
-                            ),
-                          );
-                        },
-                        child: Text("Logout"),
-                      ),
-                    ],
-                  )
-                : Container(),
-          ],
-        ),
-      ),
-    );
-  }
-}
-=========
       backgroundColor: const Color.fromARGB(255, 248, 240, 238),
       // body: Center(child: Text("Home Page")),
       body: CustomScrollView(
@@ -108,15 +76,75 @@ class _HomePageState extends State<HomePage> {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              child: Column(
                 children: [
-                  ElevatedButton(
-                      onPressed: _doNothing, child: const Text("Button1")),
-                  ElevatedButton(
-                      onPressed: _doNothing, child: const Text("Button2")),
-                  ElevatedButton(
-                      onPressed: _doNothing, child: const Text("Button3")),
+                  Image.asset(
+                    "assets/images/logo.png",
+                    height: 220,
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(
+                          onPressed: checkLogin,
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromARGB(255, 246, 231, 232),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 35, horizontal: 52),
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10))),
+                          child: const Text(
+                            "Dine In",
+                            style: TextStyle(fontSize: 16),
+                          )),
+                      ElevatedButton(
+                          onPressed: checkLogin,
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  const Color.fromARGB(255, 246, 231, 232),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 35, horizontal: 52),
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10))),
+                          child: const Text(
+                            "Pick Up",
+                            style: TextStyle(fontSize: 16),
+                          )),
+                      // ElevatedButton(
+                      //     onPressed: _doNothing, child: const Text("Button3")),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Text(
+                      "Welcome back, $_username!",
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.w500),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  //logout - will be remove after this
+                  _auth.currentUser != null
+                      ? Column(
+                          children: [
+                            ElevatedButton(
+                              onPressed: () async {
+                                await AuthMethods().signOut();
+                                _getUserData();
+                              },
+                              child: const Text("Logout"),
+                            ),
+                          ],
+                        )
+                      : Container(),
                 ],
               ),
             ),
@@ -124,13 +152,13 @@ class _HomePageState extends State<HomePage> {
           SliverPersistentHeader(
               pinned: true,
               delegate: _StickyHeaderDelegate(
-                  minHeight: 60,
-                  maxHeight: 75,
+                  minHeight: 55,
+                  maxHeight: 70,
                   child: Container(
                     color: Colors.white,
                     alignment: Alignment.center,
                     child: const Text(
-                      "Test Menu",
+                      "Menu",
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
@@ -145,7 +173,7 @@ class _HomePageState extends State<HomePage> {
                   SliverChildBuilderDelegate((BuildContext context, int index) {
                 index++;
                 return Container(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.all(10.0),
                   decoration: BoxDecoration(
                     color: Colors.blueGrey,
                     borderRadius: BorderRadius.circular(10),
@@ -189,4 +217,3 @@ class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
         oldDelegate.child != child;
   }
 }
->>>>>>>>> Temporary merge branch 2
