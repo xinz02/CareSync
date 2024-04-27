@@ -10,8 +10,7 @@ GoRouter goRouter() {
         path: '/main',
         builder: ((context, state) => const NavigationBarExample())),
     GoRoute(path: '/menu', builder: ((context, state) => const MenuPage())),
-    GoRoute(
-        path: '/profile', builder: ((context, state) => const DoNothingPage())),
+    GoRoute(path: '/profile', builder: ((context, state) =>ProfilePage())),
     GoRoute(path: '/cart', builder: ((context, state) => const CartPage())),
     GoRoute(path: '/signup', builder: ((context, state) => const SignUp())),
     GoRoute(path: '/home', builder: ((context, state) => const HomePage())),
