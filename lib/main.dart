@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:onlyu_cafe/home.dart';
 import 'package:onlyu_cafe/user_management/firebase_options.dart';
+import 'package:onlyu_cafe/user_management/profile.dart';
 import 'package:onlyu_cafe/router/router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -19,11 +21,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final router = goRouter();
+    // final router = goRouter();
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      routerConfig: router,
+      // routerConfig: router,
+      routerConfig: goRouter,
       title: 'Only U Cafe',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -35,55 +38,64 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class NavigationBarExample extends StatefulWidget {
-  const NavigationBarExample({super.key});
+// class NavigationBarExample extends StatefulWidget {
+//   const NavigationBarExample({super.key});
 
-  @override
-  NavigationBarExampleState createState() => NavigationBarExampleState();
-}
+//   @override
+//   NavigationBarExampleState createState() => NavigationBarExampleState();
+// }
 
-class NavigationBarExampleState extends State<NavigationBarExample> {
-  int _selectedIndex = 0;
+// class NavigationBarExampleState extends State<NavigationBarExample> {
+//   int _selectedIndex = 0;
 
-  void _onDestinationSelected(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+//   bool isAuthenticated() {
+//     // Check if there's a user logged in
+//     return FirebaseAuth.instance.currentUser != null;
+//   }
 
-  final List<Widget> _pages = [
-    const HomePage(),
-    const DoNothingPage(),
-  ];
+//   void _onDestinationSelected(int index) {
+//     setState(() {
+//       _selectedIndex = index;
+//       if (_selectedIndex == 2 && !isAuthenticated()) {
+//         context.push("/login");
+//       }
+//     });
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Only U Cafe',
-          style: GoogleFonts.kaushanScript(),
-        ),
-        centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 229, 202, 195),
-      ),
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: NavigationBar(
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.home), label: "Home"),
-          NavigationDestination(icon: Icon(Icons.menu_book), label: "Menu"),
-          NavigationDestination(icon: Icon(Icons.person), label: "Profile"),
-        ],
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: _onDestinationSelected,
-        indicatorColor: const Color.fromARGB(255, 229, 202, 195),
-        animationDuration: const Duration(milliseconds: 1000),
-        backgroundColor: Colors.white10,
-        shadowColor: Colors.white30,
-      ),
-    );
-  }
-}
+//   final List<Widget> _pages = [
+//     const HomePage(),
+//     const MenuPage(),
+//     const ProfilePage()
+//   ];
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text(
+//           'Only U Cafe',
+//           style: GoogleFonts.kaushanScript(),
+//         ),
+//         centerTitle: true,
+//         backgroundColor: const Color.fromARGB(255, 229, 202, 195),
+//       ),
+//       body: _pages[_selectedIndex],
+//       bottomNavigationBar: NavigationBar(
+//         destinations: const [
+//           NavigationDestination(icon: Icon(Icons.home), label: "Home"),
+//           NavigationDestination(icon: Icon(Icons.menu_book), label: "Menu"),
+//           NavigationDestination(icon: Icon(Icons.person), label: "Profile"),
+//         ],
+//         selectedIndex: _selectedIndex,
+//         onDestinationSelected: _onDestinationSelected,
+//         indicatorColor: const Color.fromARGB(255, 229, 202, 195),
+//         animationDuration: const Duration(milliseconds: 1000),
+//         backgroundColor: Colors.white10,
+//         shadowColor: Colors.white30,
+//       ),
+//     );
+//   }
+// }
 
 class MenuPage extends StatelessWidget {
   const MenuPage({super.key});
@@ -97,6 +109,7 @@ class MenuPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            const Text("Menu Page"),
             ElevatedButton(
               onPressed: () {
                 context.push("/signup");
@@ -117,19 +130,6 @@ class DoNothingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: Color.fromARGB(255, 248, 240, 238),
-      // appBar: AppBar(
-      //   backgroundColor: const Color.fromARGB(255, 229, 202, 195),
-      //   leading: IconButton(
-      //     icon: const Icon(Icons.arrow_back),
-      //     onPressed: () {},
-      //   ),
-      //   title: const Text("Do Nothing Page",
-      //       style: TextStyle(
-      //           fontSize: 20.0,
-      //           fontWeight: FontWeight.bold,
-      //           color: Colors.black)),
-      //   centerTitle: true,
-      // ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -139,6 +139,64 @@ class DoNothingPage extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class MyShell extends StatefulWidget {
+  final Widget child;
+  const MyShell({required this.child});
+
+  @override
+  _MyShellState createState() => _MyShellState();
+}
+
+class _MyShellState extends State<MyShell> {
+  int _currentIndex = 0;
+
+  final List<String> _tabs = ['/home', '/menu', '/profile'];
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+    context.push(_tabs[index]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Only U Cafe',
+          style: GoogleFonts.kaushanScript(),
+        ),
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 229, 202, 195),
+      ),
+      body: widget.child, // This will hold the current route's content
+      // bottomNavigationBar: BottomNavigationBar(
+      //   currentIndex: _currentIndex,
+      //   onTap: _onTabTapped,
+      //   items: const [
+      //     BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+      //     BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Menu'),
+      //     BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+      //   ],
+      // ),
+      bottomNavigationBar: NavigationBar(
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.home), label: "Home"),
+          NavigationDestination(icon: Icon(Icons.menu_book), label: "Menu"),
+          NavigationDestination(icon: Icon(Icons.person), label: "Profile"),
+        ],
+        selectedIndex: _currentIndex,
+        onDestinationSelected: _onTabTapped,
+        indicatorColor: const Color.fromARGB(255, 229, 202, 195),
+        animationDuration: const Duration(milliseconds: 1000),
+        backgroundColor: Colors.white10,
+        shadowColor: Colors.white30,
       ),
     );
   }
