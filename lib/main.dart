@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:onlyu_cafe/home.dart';
 import 'package:onlyu_cafe/user_management/firebase_options.dart';
+import 'package:onlyu_cafe/user_management/login.dart';
 import 'package:onlyu_cafe/user_management/profile.dart';
 import 'package:onlyu_cafe/router/router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,12 +22,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final router = goRouter();
+    final router = goRouter();
 
     return MaterialApp.router(
       debugShowCheckedModeBanner: false,
-      // routerConfig: router,
-      routerConfig: goRouter,
+      routerConfig: router,
+      // routerConfig: goRouter,
       title: 'Only U Cafe',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -96,6 +97,80 @@ class MyApp extends StatelessWidget {
 //     );
 //   }
 // }
+
+class NavigationBarExample extends StatefulWidget {
+  const NavigationBarExample({super.key});
+
+  @override
+  NavigationBarExampleState createState() => NavigationBarExampleState();
+}
+
+class NavigationBarExampleState extends State<NavigationBarExample> {
+  int _selectedIndex = 0;
+
+  bool isAuthenticated() {
+    // Check if there's a user logged in
+    return FirebaseAuth.instance.currentUser != null;
+  }
+
+  void _onDestinationSelected(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (_selectedIndex == 2 && !isAuthenticated()) {
+        context.push("/login");
+        // Login();
+      }
+    });
+  }
+
+  // final List<Widget> _pages = [
+  //   const HomePage(),
+  //   const MenuPage(),
+  //   const ProfilePage()
+  // ];
+
+  @override
+  Widget build(BuildContext context) {
+    Widget getBodyWidget(int index) {
+      switch (index) {
+        case 0:
+          return const HomePage();
+        case 1:
+          return const MenuPage();
+        case 2:
+          return const ProfilePage();
+        default:
+          return const HomePage();
+      }
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Only U Cafe',
+          style: GoogleFonts.kaushanScript(),
+        ),
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 229, 202, 195),
+      ),
+      body: getBodyWidget(_selectedIndex),
+      // _pages[_selectedIndex],
+      bottomNavigationBar: NavigationBar(
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.home), label: "Home"),
+          NavigationDestination(icon: Icon(Icons.menu_book), label: "Menu"),
+          NavigationDestination(icon: Icon(Icons.person), label: "Profile"),
+        ],
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: _onDestinationSelected,
+        indicatorColor: const Color.fromARGB(255, 229, 202, 195),
+        animationDuration: const Duration(milliseconds: 1000),
+        backgroundColor: Colors.white10,
+        shadowColor: Colors.white30,
+      ),
+    );
+  }
+}
 
 class MenuPage extends StatelessWidget {
   const MenuPage({super.key});
