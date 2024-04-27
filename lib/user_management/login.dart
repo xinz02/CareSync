@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-// import 'package:onlyu_cafe/home.dart';
-import 'package:onlyu_cafe/main.dart';
 import 'package:onlyu_cafe/service/auth.dart';
 import 'package:onlyu_cafe/user_management/forgot_password.dart';
 import 'package:onlyu_cafe/user_management/signup.dart';
@@ -30,7 +28,8 @@ class _LoginState extends State<Login> {
       //   MaterialPageRoute(
       //       builder: (context) => const NavigationBarExample() /*HomePage()*/),
       // );
-      context.go("/main");
+      context.go("/home");
+      // Navigator.of(context).popUntil((route) => route.isFirst);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         ScaffoldMessenger.of(context).showSnackBar(

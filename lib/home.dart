@@ -1,11 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-// import 'package:carousel_slider/carousel_slider.dart';
+import 'package:onlyu_cafe/main.dart';
+// import 'package:onlyu_cafe/main.dart';
 import 'package:onlyu_cafe/service/auth.dart';
 import 'package:onlyu_cafe/user_management/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:onlyu_cafe/user_management/signup.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,7 +15,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void _doNothing() {}
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -25,6 +24,21 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _getUserData();
+  }
+
+  bool isAuthenticated() {
+    // Check if there's a user logged in
+    return FirebaseAuth.instance.currentUser != null;
+  }
+
+  void checkLogin() {
+    if (!isAuthenticated()) {
+      context.go("/login");
+      _getUserData();
+      // context.push("/main");
+    } else {
+      context.go("/menu");
+    }
   }
 
   Future<void> _getUserData() async {
@@ -44,6 +58,10 @@ class _HomePageState extends State<HomePage> {
         print('User data not found');
       }
     } else {
+      setState(() {
+        // Update the _username variable
+        _username = 'guest';
+      });
       print('User not logged in');
     }
   }
@@ -71,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ElevatedButton(
-                          onPressed: _doNothing,
+                          onPressed: checkLogin,
                           style: ElevatedButton.styleFrom(
                               backgroundColor:
                                   const Color.fromARGB(255, 246, 231, 232),
@@ -85,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(fontSize: 16),
                           )),
                       ElevatedButton(
-                          onPressed: _doNothing,
+                          onPressed: checkLogin,
                           style: ElevatedButton.styleFrom(
                               backgroundColor:
                                   const Color.fromARGB(255, 246, 231, 232),
@@ -119,8 +137,8 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             ElevatedButton(
                               onPressed: () async {
-                                AuthMethods().signOut();
-                                context.go("/main");
+                                await AuthMethods().signOut();
+                                _getUserData();
                               },
                               child: const Text("Logout"),
                             ),
