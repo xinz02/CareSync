@@ -39,10 +39,10 @@ class NavigationBarExample extends StatefulWidget {
   const NavigationBarExample({super.key});
 
   @override
-  _NavigationBarExampleState createState() => _NavigationBarExampleState();
+  NavigationBarExampleState createState() => NavigationBarExampleState();
 }
 
-class _NavigationBarExampleState extends State<NavigationBarExample> {
+class NavigationBarExampleState extends State<NavigationBarExample> {
   int _selectedIndex = 0;
 
   void _onDestinationSelected(int index) {
@@ -115,8 +115,8 @@ class DoNothingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 248, 240, 238),
+    return const Scaffold(
+      backgroundColor: Color.fromARGB(255, 248, 240, 238),
       // appBar: AppBar(
       //   backgroundColor: const Color.fromARGB(255, 229, 202, 195),
       //   leading: IconButton(
@@ -130,7 +130,7 @@ class DoNothingPage extends StatelessWidget {
       //           color: Colors.black)),
       //   centerTitle: true,
       // ),
-      body: const Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
