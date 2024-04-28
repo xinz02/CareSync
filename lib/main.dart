@@ -155,70 +155,70 @@ class ProfilePage extends StatelessWidget {
   }
 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: const Color.fromARGB(255, 248, 240, 238),
-    body: FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance
-          .collection('User')
-          .doc(currentUser?.email)
-          .get(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text('Error: ${snapshot.error}'),
-          );
-        } else {
-          final userData = snapshot.data?.data() as Map<String, dynamic>?;
-
-          if (userData != null) {
-            return ListView(
-              children: [
-                const SizedBox(height: 50),
-                // Display user's profile image if available
-                if (currentUser!.photoURL != null)
-                  Image.network(
-                    currentUser!.photoURL!,
-                    width: 72,
-                    height: 72,
-                  )
-                else
-                  // Show person icon if profile image URL is null
-                  Icon(
-                    Icons.person,
-                    size: 72,
-                  ),
-
-                const SizedBox(height: 10),
-                Text(
-                  currentUser!.displayName ?? '',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey),
-                ),
-
-                const SizedBox(height: 50),
-                MyTextBox(
-                  text: userData['name'],
-                  sectionName: 'Email',
-                  onPressed: () => editField(context, 'Email'),
-                )
-              ],
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 248, 240, 238),
+      body: FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance
+            .collection('User')
+            .doc(currentUser?.email)
+            .get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
             );
           } else {
-            // Handle case where snapshot data is null
-            return Center(
-              child: Text('No data available'),
-            );
+            final userData = snapshot.data?.data() as Map<String, dynamic>?;
+
+            if (userData != null) {
+              return ListView(
+                children: [
+                  const SizedBox(height: 50),
+                  // Display user's profile image if available
+                  if (currentUser!.photoURL != null)
+                    Image.network(
+                      currentUser!.photoURL!,
+                      width: 72,
+                      height: 72,
+                    )
+                  else
+                    // Show person icon if profile image URL is null
+                    Icon(
+                      Icons.person,
+                      size: 72,
+                    ),
+
+                  const SizedBox(height: 10),
+                  Text(
+                    currentUser!.displayName ?? '',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey),
+                  ),
+
+                  const SizedBox(height: 50),
+                  MyTextBox(
+                    text: userData['name'],
+                    sectionName: 'Email',
+                    onPressed: () => editField(context, 'Email'),
+                  )
+                ],
+              );
+            } else {
+              // Handle case where snapshot data is null
+              return Center(
+                child: Text('No data available'),
+              );
+            }
           }
-        }
-      },
-    ),
-  );
-}
+        },
+      ),
+    );
+  }
 }
 
 class MyTextBox extends StatelessWidget {
