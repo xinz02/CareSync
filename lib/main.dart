@@ -141,313 +141,156 @@ class ProfilePage extends StatelessWidget {
             ),
           
           const SizedBox(height: 10),
-          Text(
-            currentUser?.displayName ?? '', 
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey), 
+          Padding(
+            padding: const EdgeInsets.only(left: 30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                SizedBox(height: 30),
+                Text (
+                  'Personal Details',
+                  style: TextStyle(
+                    color: Color(0xFF4B371C),
+                    fontWeight: FontWeight.bold
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 10),
+          MyTextBox(
+            text: currentUser!.displayName ?? 'N/A',
+            sectionName: 'Name',
+            editable: false,
+          ),
+
+          const SizedBox(height: 10),
+          MyTextBox(
+            text: currentUser!.email ?? 'N/A',
+            sectionName: 'Email',
+            editable: false, // Make it read-only
           ),
           
           const SizedBox(height: 10),
-          ListTile(
-            title: Text(
-              'Email',
-              style: TextStyle(fontSize: 18),
-            ),
-            subtitle: Text(
-              currentUser?.email ?? 'N/A',
-              style: TextStyle(fontSize: 18),
-            ),
-            trailing: IconButton(
-              onPressed: () => _editEmail(context),
-              icon: Icon(Icons.edit),
-            ),
+          MyTextBox(
+            text: '0123456486', // Update with actual phone number
+            sectionName: 'Phone Number',
+            editable: true, // Make it editable
+            onPressed: () => editField(context, 'phone'),
           ),
         ],
       ),
     );
   }
 
-<<<<<<< HEAD
-  // Method to handle editing email
-  void _editEmail(BuildContext context) async {
-    String newEmail = '';
-
-    // Show an alert dialog for editing email
-    await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Edit Email'),
-        content: TextField(
-          onChanged: (value) => newEmail = value,
-          decoration: InputDecoration(
-            hintText: 'Enter new email',
-          ),
-=======
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 248, 240, 238),
-      body: FutureBuilder<DocumentSnapshot>(
-        future: FirebaseFirestore.instance
-            .collection('User')
-            .doc(currentUser?.email)
-            .get(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            final userData = snapshot.data?.data() as Map<String, dynamic>?;
-
-            if (userData != null) {
-              return ListView(
-                children: [
-                  const SizedBox(height: 50),
-                  // Display user's profile image if available
-                  if (currentUser!.photoURL != null)
-                    Image.network(
-                      currentUser!.photoURL!,
-                      width: 72,
-                      height: 72,
-                    )
-                  else
-                    // Show person icon if profile image URL is null
-                    Icon(
-                      Icons.person,
-                      size: 72,
-                    ),
-
-                  const SizedBox(height: 10),
-                  Text(
-                    currentUser!.displayName ?? '',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.grey),
-                  ),
-
-                  const SizedBox(height: 50),
-                  MyTextBox(
-                    text: userData['name'],
-                    sectionName: 'Email',
-                    onPressed: () => editField(context, 'Email'),
-                  )
-                ],
-              );
-            } else {
-              // Handle case where snapshot data is null
-              return Center(
-                child: Text('No data available'),
-              );
-            }
-          }
+  Future<void> editField(BuildContext context, String field) async {
+  String? newValue;
+  newValue = await showDialog<String>(
+    context: context,
+    builder: (context) => AlertDialog(
+      backgroundColor: Colors.white,
+      title: Text(
+        'Edit $field',
+        style: const TextStyle(color: Colors.black),
+      ),
+      content: TextField(
+        autofocus: true,
+        style: TextStyle(color: Colors.black),
+        decoration: InputDecoration(
+          hintText: 'Enter new $field',
+          hintStyle: TextStyle(color: Colors.grey),
+        ),
+        onChanged: (value) {
+          newValue = value;
         },
       ),
-    );
+      actions: [
+        TextButton(
+          child: Text('Cancel', style: TextStyle(color: Colors.black)),
+          onPressed: () => Navigator.pop(context),
+        ),
+        TextButton(
+          child: Text('Save', style: TextStyle(color: Colors.black)),
+          onPressed: () => Navigator.of(context).pop(newValue),
+        ),
+      ],
+    ),
+  );
+
+  if (newValue != null && newValue!.isNotEmpty) {
+    // Update value in Firebase
+    if (field == 'name') {
+      await currentUser!.updateDisplayName(newValue!);
+    } else if (field == 'phone') {
+      // Update phone number in Firestore (replace this with your Firestore update logic)
+    }
+    
+    // Update UI with new value
+    // // setState(() {
+    //   if (field == 'phone') {
+    //     // Update phone number
+    //     // currentUser!.phoneNumber = newValue;
+    //   }
+    // });
   }
+ }
 }
 
 class MyTextBox extends StatelessWidget {
-  final String? text;
+  final String text;
   final String sectionName;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
+  final bool editable; // New parameter to control editability
 
   const MyTextBox({
     Key? key,
     required this.text,
     required this.sectionName,
-    required this.onPressed,
+    this.onPressed,
+    this.editable = true, // Default to true for editable
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(sectionName),
-            Text(text ?? 'N/A'),
-          ],
->>>>>>> 226a4f20af04edd81cb2ba79d6a1542cc4fa88b3
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Cancel'),
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 32),
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                sectionName,
+                style: TextStyle(
+                  color: Colors.grey[700],
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Divider(color: Colors.grey), // Add a horizontal line under the section name
+              SizedBox(height: 5),
+              Text(
+                text,
+                style: TextStyle(
+                  color: editable ? Colors.black : Colors.grey,
+                ),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () async {
-              // Update email if not empty
-              if (newEmail.isNotEmpty) {
-                try {
-                  await currentUser!.updateEmail(newEmail);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Email updated successfully')),
-                  );
-                } catch (error) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Failed to update email: $error')),
-                  );
-                }
-              }
-              Navigator.pop(context);
-            },
-            child: Text('Save'),
-          ),
+          if (onPressed != null && editable)
+            IconButton(
+              onPressed: onPressed,
+              icon: Icon(Icons.edit),
+              color: Colors.grey[400],
+            ),
         ],
       ),
     );
   }
 }
-// class ProfilePage extends StatelessWidget {
-//   final User? currentUser = FirebaseAuth.instance.currentUser;
-//   @override
-//   Widget build(BuildContext context) {
-//     print("Current user email: ${currentUser?.email}");
-
-//     return Scaffold(
-//       backgroundColor: const Color.fromARGB(255, 248, 240, 238),
-//       body: FutureBuilder<DocumentSnapshot>(
-//         future: FirebaseFirestore.instance
-//             .collection('User')
-//             .doc(currentUser?.email)
-//             .get(),
-//         builder: (context, snapshot) {
-//           if (snapshot.connectionState == ConnectionState.waiting) {
-//             return Center(
-//               child: CircularProgressIndicator(),
-//             );
-//           } else if (snapshot.hasError) {
-//             print("Error retrieving data: ${snapshot.error}");
-//             return Center(
-//               child: Text('Error: ${snapshot.error}'),
-//             );
-//           } else {
-//             final userData = snapshot.data?.data() as Map<String, dynamic>?;
-
-//             if (userData != null) {
-//               print("User data: $userData");
-//               return ListView(
-//                 children: [
-//                   const SizedBox(height: 50),
-//                   // Display user's profile image if available
-//                   if (currentUser!.photoURL != null)
-//                     Image.network(
-//                       currentUser!.photoURL!,
-//                       width: 72,
-//                       height: 72,
-//                     )
-//                   else
-//                     // Show person icon if profile image URL is null
-//                     Icon(
-//                       Icons.person,
-//                       size: 72,
-//                     ),
-
-//                   const SizedBox(height: 10),
-//                   Text(
-//                     currentUser!.displayName ?? '',
-//                     textAlign: TextAlign.center,
-//                     style: TextStyle(color: Colors.grey),
-//                   ),
-
-//                   const SizedBox(height: 50),
-//                   MyTextBox(
-//                     text: userData['name'],
-//                     sectionName: 'Email',
-//                     onPressed: () => editField(context, 'Email'),
-//                   )
-//                 ],
-//               );
-//             } else {
-//               // Handle case where snapshot data is null
-//               print("No user data found");
-//               return Center(
-//                 child: Text('No data available'),
-//               );
-//             }
-//           }
-//         },
-//       ),
-//     );
-//   }
-
-//   Future<void> editField(BuildContext context, String field) async {
-//     String newValue = '';
-//     await showDialog(
-//       context: context,
-//       builder: (context) => AlertDialog(
-//         backgroundColor: Colors.grey[900],
-//         title: Text(
-//           'Edit $field',
-//           style: const TextStyle(color: Colors.white),
-//         ),
-//         content: TextField(
-//           autofocus: true,
-//           style: TextStyle(color: Colors.white),
-//           decoration: InputDecoration(
-//             hintText: 'Enter new $field',
-//             hintStyle: TextStyle(color: Colors.grey),
-//           ),
-//           onChanged: (value) {
-//             newValue = value;
-//           },
-//         ),
-//         actions: [
-//           TextButton(
-//             child: Text('Cancel', style: TextStyle(color: Colors.white)),
-//             onPressed: () => Navigator.pop(context),
-//           ),
-//           TextButton(
-//             child: Text('Save', style: TextStyle(color: Colors.white)),
-//             onPressed: () => Navigator.of(context).pop(newValue),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-// class MyTextBox extends StatelessWidget {
-//   final String? text;
-//   final String sectionName;
-//   final VoidCallback onPressed;
-
-//   const MyTextBox({
-//     Key? key,
-//     required this.text,
-//     required this.sectionName,
-//     required this.onPressed,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return GestureDetector(
-//       onTap: onPressed,
-//       child: Container(
-//         padding: const EdgeInsets.all(8),
-//         decoration: BoxDecoration(
-//           border: Border.all(color: Colors.grey),
-//           borderRadius: BorderRadius.circular(8),
-//         ),
-//         child: Row(
-//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//           children: [
-//             Text(sectionName),
-//             Text(text ?? 'N/A'),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
