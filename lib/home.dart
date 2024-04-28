@@ -31,15 +31,15 @@ class _HomePageState extends State<HomePage> {
     return FirebaseAuth.instance.currentUser != null;
   }
 
-  void checkLogin() {
-    if (!isAuthenticated()) {
-      context.go("/login");
-      _getUserData();
-      // context.push("/main");
-    } else {
-      context.go("/menu");
-    }
-  }
+  // void checkLogin() {
+  //   if (!isAuthenticated()) {
+  //     context.go("/login");
+  //     _getUserData();
+  //     // context.push("/main");
+  //   } else {
+  //     // context.go("/menu");
+  //   }
+  // }
 
   Future<void> _getUserData() async {
     final User? user = _auth.currentUser;
@@ -78,18 +78,23 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
+                  const SizedBox(
+                    height: 15,
+                  ),
                   Image.asset(
                     "assets/images/logo.png",
                     height: 220,
                   ),
                   const SizedBox(
-                    height: 5,
+                    height: 25,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       ElevatedButton(
-                          onPressed: checkLogin,
+                          onPressed: () {
+                            context.push("/menu");
+                          },
                           style: ElevatedButton.styleFrom(
                               backgroundColor:
                                   const Color.fromARGB(255, 246, 231, 232),
@@ -103,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(fontSize: 16),
                           )),
                       ElevatedButton(
-                          onPressed: checkLogin,
+                          onPressed: () {},
                           style: ElevatedButton.styleFrom(
                               backgroundColor:
                                   const Color.fromARGB(255, 246, 231, 232),
