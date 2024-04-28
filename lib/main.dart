@@ -167,6 +167,7 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
+<<<<<<< HEAD
   // Method to handle editing email
   void _editEmail(BuildContext context) async {
     String newEmail = '';
@@ -181,6 +182,103 @@ class ProfilePage extends StatelessWidget {
           decoration: InputDecoration(
             hintText: 'Enter new email',
           ),
+=======
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 248, 240, 238),
+      body: FutureBuilder<DocumentSnapshot>(
+        future: FirebaseFirestore.instance
+            .collection('User')
+            .doc(currentUser?.email)
+            .get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          } else {
+            final userData = snapshot.data?.data() as Map<String, dynamic>?;
+
+            if (userData != null) {
+              return ListView(
+                children: [
+                  const SizedBox(height: 50),
+                  // Display user's profile image if available
+                  if (currentUser!.photoURL != null)
+                    Image.network(
+                      currentUser!.photoURL!,
+                      width: 72,
+                      height: 72,
+                    )
+                  else
+                    // Show person icon if profile image URL is null
+                    Icon(
+                      Icons.person,
+                      size: 72,
+                    ),
+
+                  const SizedBox(height: 10),
+                  Text(
+                    currentUser!.displayName ?? '',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey),
+                  ),
+
+                  const SizedBox(height: 50),
+                  MyTextBox(
+                    text: userData['name'],
+                    sectionName: 'Email',
+                    onPressed: () => editField(context, 'Email'),
+                  )
+                ],
+              );
+            } else {
+              // Handle case where snapshot data is null
+              return Center(
+                child: Text('No data available'),
+              );
+            }
+          }
+        },
+      ),
+    );
+  }
+}
+
+class MyTextBox extends StatelessWidget {
+  final String? text;
+  final String sectionName;
+  final VoidCallback onPressed;
+
+  const MyTextBox({
+    Key? key,
+    required this.text,
+    required this.sectionName,
+    required this.onPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(sectionName),
+            Text(text ?? 'N/A'),
+          ],
+>>>>>>> 226a4f20af04edd81cb2ba79d6a1542cc4fa88b3
         ),
         actions: [
           TextButton(
