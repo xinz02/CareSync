@@ -13,64 +13,18 @@ bool isAuthenticated() {
   return FirebaseAuth.instance.currentUser != null;
 }
 
-GoRouter goRouter() {
-  return GoRouter(
-    initialLocation: '/main',
-    routes: [
-      GoRoute(
-        path: '/main',
-        builder: (context, state) => const NavigationBarExample(),
-      ),
-      GoRoute(
-        path: '/menu',
-        builder: (context, state) => const MenuPage(),
-      ),
-      GoRoute(
-        path: '/cart',
-        builder: (context, state) => const CartPage(),
-      ),
-      GoRoute(
-        path: '/signup',
-        builder: (context, state) => const SignUp(),
-      ),
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const Login(),
-      ),
-      GoRoute(
-        path: '/home',
-        builder: (context, state) => const HomePage(),
-      ),
-      GoRoute(
-        path: '/profile',
-        builder: (context, state) =>
-            isAuthenticated() ? const ProfilePage() : const Login(),
-        redirect: (context, state) {
-          // Check if user is authenticated
-          if (!isAuthenticated()) {
-            // return '/login';
-            context.go("/login");
-            context.go("/main");
-          }
-          return "/profile";
-        },
-      ),
-      GoRoute(
-        path: '/dinein',
-        builder: (context, state) =>
-            isAuthenticated() ? const MenuPage() : const Login(),
-        redirect: (context, state) {
-          // Check if user is authenticated
-          if (!isAuthenticated()) {
-            // return '/login';
-            context.push("/login");
-          }
-          return "/menu";
-        },
-      ),
-    ],
-  );
-}
+// GoRouter goRouter() {
+//   return GoRouter(initialLocation: '/main', routes: [
+//     GoRoute(
+//         path: '/main',
+//         builder: ((context, state) => const NavigationBarExample())),
+//     GoRoute(path: '/menu', builder: ((context, state) => const MenuPage())),
+//     GoRoute(path: '/profile', builder: ((context, state) => ProfilePage())),
+//     GoRoute(path: '/cart', builder: ((context, state) => const CartPage())),
+//     GoRoute(path: '/signup', builder: ((context, state) => const SignUp())),
+//     GoRoute(path: '/home', builder: ((context, state) => const HomePage())),
+//   ]);
+// }
 
 // final goRouter = GoRouter(
 //   initialLocation: '/home',
@@ -116,3 +70,62 @@ GoRouter goRouter() {
 //     ),
 //   ],
 // );
+
+GoRouter goRouter() {
+  return GoRouter(
+    initialLocation: '/main',
+    routes: [
+      GoRoute(
+        path: '/main',
+        builder: (context, state) => const NavigationBarExample(),
+      ),
+      GoRoute(
+        path: '/menu',
+        builder: (context, state) => const MenuPage(),
+      ),
+      GoRoute(
+        path: '/cart',
+        builder: (context, state) => const CartPage(),
+      ),
+      GoRoute(
+        path: '/signup',
+        builder: (context, state) => const SignUp(),
+      ),
+      GoRoute(
+        path: '/login',
+        builder: (context, state) => const Login(),
+      ),
+      GoRoute(
+        path: '/home',
+        builder: (context, state) => const HomePage(),
+      ),
+      GoRoute(
+        path: '/profile',
+        builder: (context, state) =>
+            isAuthenticated() ? ProfilePage() : const Login(),
+        redirect: (context, state) {
+          // Check if user is authenticated
+          if (!isAuthenticated()) {
+            // return '/login';
+            context.go("/login");
+            context.go("/main");
+          }
+          return "/profile";
+        },
+      ),
+      GoRoute(
+        path: '/dinein',
+        builder: (context, state) =>
+            isAuthenticated() ? const MenuPage() : const Login(),
+        redirect: (context, state) {
+          // Check if user is authenticated
+          if (!isAuthenticated()) {
+            // return '/login';
+            context.push("/login");
+          }
+          return "/menu";
+        },
+      ),
+    ],
+  );
+}

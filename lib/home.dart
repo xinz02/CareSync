@@ -136,20 +136,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  //logout - will be remove after this
-                  _auth.currentUser != null
-                      ? Column(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () async {
-                                await AuthMethods().signOut();
-                                _getUserData();
-                              },
-                              child: const Text("Logout"),
-                            ),
-                          ],
-                        )
-                      : Container(),
                 ],
               ),
             ),

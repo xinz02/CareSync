@@ -65,7 +65,7 @@ class _SignUpState extends State<SignUp> {
       // ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 80),
+          padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 75),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -143,7 +143,7 @@ class _SignUpState extends State<SignUp> {
                           });
                         },
                       ),
-                      const SizedBox(height: 45),
+                      const SizedBox(height: 40),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor:
@@ -195,7 +195,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 15),
                     ],
                   ),
                 ),

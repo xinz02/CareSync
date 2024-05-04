@@ -9,12 +9,11 @@ class ForgotPassword extends StatefulWidget {
 }
 
 class _ForgotPasswordState extends State<ForgotPassword> {
-
-  String email="";
+  String email = "";
 
   TextEditingController emailController = TextEditingController();
 
-  final _formKey=GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
   resetPassword() async {
     try {
@@ -27,8 +26,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           ),
         ),
       );
-    } on FirebaseAuthException catch(e) {
-      if(e.code=="user-not-found") {
+    } on FirebaseAuthException catch (e) {
+      if (e.code == "user-not-found") {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -44,6 +43,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 248, 240, 238),
       appBar: AppBar(
         title: const Text('Reset Password'),
       ),

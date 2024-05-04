@@ -1,6 +1,10 @@
+// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, use_super_parameters
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:onlyu_cafe/home.dart';
 import 'package:onlyu_cafe/user_management/firebase_options.dart';
@@ -123,11 +127,11 @@ class NavigationBarExampleState extends State<NavigationBarExample> {
     });
   }
 
-  // final List<Widget> _pages = [
-  //   const HomePage(),
-  //   const MenuPage(),
-  //   const ProfilePage()
-  // ];
+  final List<Widget> _pages = [
+    const HomePage(),
+    const MenuPage(),
+    ProfilePage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +142,7 @@ class NavigationBarExampleState extends State<NavigationBarExample> {
         case 1:
           return const MenuPage();
         case 2:
-          return const ProfilePage();
+          return ProfilePage();
         default:
           return const HomePage();
       }
@@ -198,26 +202,145 @@ class MenuPage extends StatelessWidget {
   }
 }
 
-class DoNothingPage extends StatelessWidget {
-  const DoNothingPage({super.key});
+// class ProfilePage extends StatelessWidget {
+//   final User? currentUser = FirebaseAuth.instance.currentUser;
 
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Color.fromARGB(255, 248, 240, 238),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Do Nothing Page',
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+//   Future<void> editField(BuildContext context, String field) async {
+//     String newValue = '';
+//     await showDialog(
+//       context: context,
+//       builder: (context) => AlertDialog(
+//         backgroundColor: Colors.grey[900],
+//         title: Text(
+//           'Edit $field',
+//           style: const TextStyle(color: Colors.white),
+//         ),
+//         content: TextField(
+//           autofocus: true,
+//           style: TextStyle(color: Colors.white),
+//           decoration: InputDecoration(
+//             hintText: 'Enter new $field',
+//             hintStyle: TextStyle(color: Colors.grey),
+//           ),
+//           onChanged: (value) {
+//             newValue = value;
+//           },
+//         ),
+//         actions: [
+//           TextButton(
+//             child: Text('Cancel', style: TextStyle(color: Colors.white)),
+//             onPressed: () => Navigator.pop(context),
+//           ),
+//           TextButton(
+//             child: Text('Save', style: TextStyle(color: Colors.white)),
+//             onPressed: () => Navigator.of(context).pop(newValue),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: const Color.fromARGB(255, 248, 240, 238),
+//       body: FutureBuilder<DocumentSnapshot>(
+//         future: FirebaseFirestore.instance
+//             .collection('User')
+//             // .doc(currentUser?.email)
+//             .doc(currentUser?.uid)
+//             .get(),
+//         builder: (context, snapshot) {
+//           if (snapshot.connectionState == ConnectionState.waiting) {
+//             return Center(
+//               child: CircularProgressIndicator(),
+//             );
+//           } else if (snapshot.hasError) {
+//             return Center(
+//               child: Text('Error: ${snapshot.error}'),
+//             );
+//           } else {
+//             final userData = snapshot.data?.data() as Map<String, dynamic>?;
+
+//             if (userData != null) {
+//               return ListView(
+//                 children: [
+//                   const SizedBox(height: 50),
+//                   // Display user's profile image if available
+//                   if (currentUser!.photoURL != null)
+//                     Image.network(
+//                       currentUser!.photoURL!,
+//                       width: 72,
+//                       height: 72,
+//                     )
+//                   else
+//                     // Show person icon if profile image URL is null
+//                     Icon(
+//                       Icons.person,
+//                       size: 72,
+//                     ),
+
+//                   const SizedBox(height: 10),
+//                   Text(
+//                     currentUser!.displayName ?? '',
+//                     textAlign: TextAlign.center,
+//                     style: TextStyle(color: Colors.grey),
+//                   ),
+
+//                   const SizedBox(height: 50),
+//                   MyTextBox(
+//                     text: userData['email'],
+//                     sectionName: 'Email',
+//                     onPressed: () => editField(context, 'Email'),
+//                   )
+//                 ],
+//               );
+//             } else {
+//               // Handle case where snapshot data is null
+//               return Center(
+//                 child: Text('No data available'),
+//               );
+//             }
+//           }
+//         },
+//       ),
+//     );
+//   }
+// }
+
+// class MyTextBox extends StatelessWidget {
+//   final String? text;
+//   final String sectionName;
+//   final VoidCallback onPressed;
+
+//   const MyTextBox({
+//     Key? key,
+//     required this.text,
+//     required this.sectionName,
+//     required this.onPressed,
+//   }) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: onPressed,
+//       child: Container(
+//         padding: const EdgeInsets.all(8),
+//         decoration: BoxDecoration(
+//           border: Border.all(color: Colors.grey),
+//           borderRadius: BorderRadius.circular(8),
+//         ),
+//         child: Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             Text(sectionName),
+//             Text(text ?? 'N/A'),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class MyShell extends StatefulWidget {
   final Widget child;
