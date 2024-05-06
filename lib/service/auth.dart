@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:onlyu_cafe/home.dart';
+import 'package:onlyu_cafe/main.dart';
 import 'package:onlyu_cafe/service/database.dart';
 
 class AuthMethods {
@@ -35,20 +36,26 @@ class AuthMethods {
       Map<String, dynamic> userInfoMap = {
         "email": userDetails!.email,
         "name": userDetails.displayName,
-        "imgUrl": userDetails.photoURL??"",
+        "imgUrl": userDetails.photoURL ?? "",
+        "phoneNumber": userDetails.phoneNumber ?? "",
         "id": userDetails.uid
       };
       await DatabaseMethods()
           .addUser(userDetails.uid, userInfoMap)
           .then((value) {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const HomePage()));
+            context, MaterialPageRoute(builder: (context) => MainPage()));
       });
     }
   }
 
-  Future<void> signOut() async{
+  Future<void> signOut() async {
     final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     await firebaseAuth.signOut();
+  }
+
+  bool isAuthenticated() {
+    // Check if there's a user logged in
+    return FirebaseAuth.instance.currentUser != null;
   }
 }

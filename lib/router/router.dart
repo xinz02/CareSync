@@ -73,11 +73,11 @@ bool isAuthenticated() {
 
 GoRouter goRouter() {
   return GoRouter(
-    initialLocation: '/main',
+    initialLocation: '/',
     routes: [
       GoRoute(
-        path: '/main',
-        builder: (context, state) => const NavigationBarExample(),
+        path: '/',
+        builder: (context, state) => MainPage(),
       ),
       GoRoute(
         path: '/menu',
@@ -95,37 +95,16 @@ GoRouter goRouter() {
         path: '/login',
         builder: (context, state) => const Login(),
       ),
-      GoRoute(
-        path: '/home',
-        builder: (context, state) => const HomePage(),
-      ),
-      GoRoute(
-        path: '/profile',
-        builder: (context, state) =>
-            isAuthenticated() ? ProfilePage() : const Login(),
-        redirect: (context, state) {
-          // Check if user is authenticated
-          if (!isAuthenticated()) {
-            // return '/login';
-            context.go("/login");
-            context.go("/main");
-          }
-          return "/profile";
-        },
-      ),
-      GoRoute(
-        path: '/dinein',
-        builder: (context, state) =>
-            isAuthenticated() ? const MenuPage() : const Login(),
-        redirect: (context, state) {
-          // Check if user is authenticated
-          if (!isAuthenticated()) {
-            // return '/login';
-            context.push("/login");
-          }
-          return "/menu";
-        },
-      ),
+      // GoRoute(
+      //   path: '/home/:tab',
+      //   builder: (context, state) {
+      //     String tabStr = state.pathParameters['tab'] ?? '0';
+      //     int tabIndex = int.parse(tabStr);
+      //     return MainPage(
+      //       tab: tabIndex,
+      //     );
+      //   },
+      // ),
     ],
   );
 }

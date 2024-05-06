@@ -14,15 +14,18 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  String email = "", password = "", name = "";
+  String email = "", password = "", name = "", phoneNum = "";
   TextEditingController emailController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController phoneNumController = TextEditingController();
 
   final _formkey = GlobalKey<FormState>();
 
   registration() async {
-    if (nameController.text != "" && emailController.text != "") {
+    if (nameController.text != "" &&
+        emailController.text != "" &&
+        phoneNumController.text != "") {
       try {
         UserCredential userCredential = await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
@@ -35,6 +38,7 @@ class _SignUpState extends State<SignUp> {
           'name': name,
           'email': email,
           'imgUrl': '', // default image URL for email/password sign up
+          'phoneNumber': phoneNum,
         });
 
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -75,7 +79,7 @@ class _SignUpState extends State<SignUp> {
                 textAlign: TextAlign.start,
               ),
               const SizedBox(
-                height: 25,
+                height: 15,
               ),
               GestureDetector(
                 onTap: () {
@@ -106,7 +110,7 @@ class _SignUpState extends State<SignUp> {
                           });
                         },
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 15),
                       TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -124,7 +128,7 @@ class _SignUpState extends State<SignUp> {
                           });
                         },
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 15),
                       TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -143,7 +147,25 @@ class _SignUpState extends State<SignUp> {
                           });
                         },
                       ),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 15),
+                      TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter phone numer';
+                          }
+                          return null;
+                        },
+                        controller: phoneNumController,
+                        decoration: const InputDecoration(
+                          labelText: 'Phone Numer',
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            phoneNum = value;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 30),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                             backgroundColor:

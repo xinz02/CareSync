@@ -8,10 +8,17 @@ import 'package:onlyu_cafe/user_management/login.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  // final VoidCallback
+  //     onNavigateToMenu; // A callback function to switch to the Menu tab.
+
+  // HomePage({super.key, required this.onNavigateToMenu});
+  final void Function(String)
+      onButtonPressed; // Callback to navigate and set order type
+
+  HomePage({super.key, required this.onButtonPressed});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
@@ -25,21 +32,6 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _getUserData();
   }
-
-  bool isAuthenticated() {
-    // Check if there's a user logged in
-    return FirebaseAuth.instance.currentUser != null;
-  }
-
-  // void checkLogin() {
-  //   if (!isAuthenticated()) {
-  //     context.go("/login");
-  //     _getUserData();
-  //     // context.push("/main");
-  //   } else {
-  //     // context.go("/menu");
-  //   }
-  // }
 
   Future<void> _getUserData() async {
     final User? user = _auth.currentUser;
@@ -93,7 +85,8 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       ElevatedButton(
                           onPressed: () {
-                            context.push("/menu");
+                            widget.onButtonPressed(
+                                'dine in'); // Pass 'dine in' to navigate to the Menu tab
                           },
                           style: ElevatedButton.styleFrom(
                               backgroundColor:
@@ -108,7 +101,10 @@ class _HomePageState extends State<HomePage> {
                             style: TextStyle(fontSize: 16),
                           )),
                       ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            widget.onButtonPressed(
+                                'pick up'); // Pass 'dine in' to navigate to the Menu tab
+                          },
                           style: ElevatedButton.styleFrom(
                               backgroundColor:
                                   const Color.fromARGB(255, 246, 231, 232),
@@ -121,8 +117,6 @@ class _HomePageState extends State<HomePage> {
                             "Pick Up",
                             style: TextStyle(fontSize: 16),
                           )),
-                      // ElevatedButton(
-                      //     onPressed: _doNothing, child: const Text("Button3")),
                     ],
                   ),
                   const SizedBox(height: 20),

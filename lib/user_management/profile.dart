@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:onlyu_cafe/main.dart';
+import 'package:onlyu_cafe/router/router.dart';
 import 'package:onlyu_cafe/service/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -25,7 +26,9 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _getUserData();
+    if (isAuthenticated()) {
+      _getUserData();
+    }
   }
 
   Future<void> _getUserData() async {
@@ -38,7 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
       if (userData.exists) {
         final String name = userData.get('name');
         final String email = userData.get('email');
-        final String phoneNum = userData.get('phoneNumber');
+        final String phoneNum = userData.get('phoneNumber') ?? '';
         setState(() {
           // Update the _username variable
           _username = name;

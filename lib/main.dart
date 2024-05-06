@@ -43,111 +43,33 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// class NavigationBarExample extends StatefulWidget {
-//   const NavigationBarExample({super.key});
-
-//   @override
-//   NavigationBarExampleState createState() => NavigationBarExampleState();
-// }
-
-// class NavigationBarExampleState extends State<NavigationBarExample> {
-//   int _selectedIndex = 0;
-
-//   bool isAuthenticated() {
-//     // Check if there's a user logged in
-//     return FirebaseAuth.instance.currentUser != null;
-//   }
-
-//   void _onDestinationSelected(int index) {
-//     setState(() {
-//       _selectedIndex = index;
-//       if (_selectedIndex == 2 && !isAuthenticated()) {
-//         context.push("/login");
-//       }
-//     });
-//   }
-
-//   final List<Widget> _pages = [
-//     const HomePage(),
-//     const MenuPage(),
-//     const ProfilePage()
-//   ];
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text(
-//           'Only U Cafe',
-//           style: GoogleFonts.kaushanScript(),
-//         ),
-//         centerTitle: true,
-//         backgroundColor: const Color.fromARGB(255, 229, 202, 195),
-//       ),
-//       body: _pages[_selectedIndex],
-//       bottomNavigationBar: NavigationBar(
-//         destinations: const [
-//           NavigationDestination(icon: Icon(Icons.home), label: "Home"),
-//           NavigationDestination(icon: Icon(Icons.menu_book), label: "Menu"),
-//           NavigationDestination(icon: Icon(Icons.person), label: "Profile"),
-//         ],
-//         selectedIndex: _selectedIndex,
-//         onDestinationSelected: _onDestinationSelected,
-//         indicatorColor: const Color.fromARGB(255, 229, 202, 195),
-//         animationDuration: const Duration(milliseconds: 1000),
-//         backgroundColor: Colors.white10,
-//         shadowColor: Colors.white30,
-//       ),
-//     );
-//   }
-// }
-
-class NavigationBarExample extends StatefulWidget {
-  const NavigationBarExample({super.key});
-
+class MainPage extends StatefulWidget {
   @override
-  NavigationBarExampleState createState() => NavigationBarExampleState();
+  _MainPageState createState() => _MainPageState();
 }
 
-class NavigationBarExampleState extends State<NavigationBarExample> {
+class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
+  String _orderType = '';
 
-  bool isAuthenticated() {
-    // Check if there's a user logged in
-    return FirebaseAuth.instance.currentUser != null;
-  }
-
-  void _onDestinationSelected(int index) {
+  void _onItemTapped(int index) {
     setState(() {
-      _selectedIndex = index;
-      if (_selectedIndex == 2 && !isAuthenticated()) {
-        context.push("/login");
-        // Login();
+      if (index == 2 && !isAuthenticated()) {
+        context.go("/login");
       }
+      _selectedIndex = index;
     });
   }
 
-  final List<Widget> _pages = [
-    const HomePage(),
-    const MenuPage(),
-    ProfilePage(),
-  ];
+  void _navigateToMenu(String orderType) {
+    setState(() {
+      _selectedIndex = 1; // Switch to the Menu tab
+      _orderType = orderType; // Set the order type
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    Widget getBodyWidget(int index) {
-      switch (index) {
-        case 0:
-          return const HomePage();
-        case 1:
-          return const MenuPage();
-        case 2:
-          return ProfilePage();
-        default:
-          return const HomePage();
-      }
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -157,8 +79,14 @@ class NavigationBarExampleState extends State<NavigationBarExample> {
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 229, 202, 195),
       ),
-      body: getBodyWidget(_selectedIndex),
-      // _pages[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          HomePage(onButtonPressed: _navigateToMenu),
+          MenuPage(orderType: _orderType),
+          ProfilePage(),
+        ],
+      ),
       bottomNavigationBar: NavigationBar(
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home), label: "Home"),
@@ -166,7 +94,7 @@ class NavigationBarExampleState extends State<NavigationBarExample> {
           NavigationDestination(icon: Icon(Icons.person), label: "Profile"),
         ],
         selectedIndex: _selectedIndex,
-        onDestinationSelected: _onDestinationSelected,
+        onDestinationSelected: _onItemTapped,
         indicatorColor: const Color.fromARGB(255, 229, 202, 195),
         animationDuration: const Duration(milliseconds: 1000),
         backgroundColor: Colors.white10,
@@ -177,7 +105,8 @@ class NavigationBarExampleState extends State<NavigationBarExample> {
 }
 
 class MenuPage extends StatelessWidget {
-  const MenuPage({super.key});
+  final String orderType;
+  const MenuPage({this.orderType = ''});
 
   @override
   Widget build(BuildContext context) {
@@ -189,6 +118,7 @@ class MenuPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             const Text("Menu Page"),
+            Text("Order Type: $orderType"),
             ElevatedButton(
               onPressed: () {
                 context.push("/signup");
@@ -202,200 +132,84 @@ class MenuPage extends StatelessWidget {
   }
 }
 
-// class ProfilePage extends StatelessWidget {
-//   final User? currentUser = FirebaseAuth.instance.currentUser;
+// class MainPage extends StatefulWidget {
+//   final int tab;
+//   const MainPage({super.key, this.tab = 0});
 
-//   Future<void> editField(BuildContext context, String field) async {
-//     String newValue = '';
-//     await showDialog(
-//       context: context,
-//       builder: (context) => AlertDialog(
-//         backgroundColor: Colors.grey[900],
-//         title: Text(
-//           'Edit $field',
-//           style: const TextStyle(color: Colors.white),
-//         ),
-//         content: TextField(
-//           autofocus: true,
-//           style: TextStyle(color: Colors.white),
-//           decoration: InputDecoration(
-//             hintText: 'Enter new $field',
-//             hintStyle: TextStyle(color: Colors.grey),
-//           ),
-//           onChanged: (value) {
-//             newValue = value;
-//           },
-//         ),
-//         actions: [
-//           TextButton(
-//             child: Text('Cancel', style: TextStyle(color: Colors.white)),
-//             onPressed: () => Navigator.pop(context),
-//           ),
-//           TextButton(
-//             child: Text('Save', style: TextStyle(color: Colors.white)),
-//             onPressed: () => Navigator.of(context).pop(newValue),
-//           ),
-//         ],
-//       ),
-//     );
+//   @override
+//   // _MainPageState createState() => _MainPageState();
+//   State<MainPage> createState() => _MainPageState();
+// }
+
+// class _MainPageState extends State<MainPage> {
+//   int selectedIndex = 0;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     selectedIndex = widget.tab;
+//     print("init selected tab: $selectedIndex");
+//   }
+
+//   void _onDestinationSelected(int index) {
+//     setState(() {
+//       selectedIndex = index;
+//       print("onDestination selected: $selectedIndex");
+//       if (selectedIndex == 2 && !isAuthenticated()) {
+//         context.push("/login");
+//         // Login();
+//       }
+//     });
 //   }
 
 //   @override
 //   Widget build(BuildContext context) {
+//     Widget getBodyWidget(int index) {
+//       print("Selected tab in build: $index");
+//       switch (index) {
+//         case 0:
+//           int test = widget.tab;
+//           print("widget.tab : $test");
+//           return const HomePage();
+//         case 1:
+//           int test = widget.tab;
+//           print("widget.tab : $test");
+//           return const MenuPage();
+//         case 2:
+//           int test = widget.tab;
+//           print("widget.tab : $test");
+//           return ProfilePage();
+//         default:
+//           int test = widget.tab;
+//           print("widget.tab : $test");
+//           return const HomePage();
+//       }
+//     }
+
 //     return Scaffold(
-//       backgroundColor: const Color.fromARGB(255, 248, 240, 238),
-//       body: FutureBuilder<DocumentSnapshot>(
-//         future: FirebaseFirestore.instance
-//             .collection('User')
-//             // .doc(currentUser?.email)
-//             .doc(currentUser?.uid)
-//             .get(),
-//         builder: (context, snapshot) {
-//           if (snapshot.connectionState == ConnectionState.waiting) {
-//             return Center(
-//               child: CircularProgressIndicator(),
-//             );
-//           } else if (snapshot.hasError) {
-//             return Center(
-//               child: Text('Error: ${snapshot.error}'),
-//             );
-//           } else {
-//             final userData = snapshot.data?.data() as Map<String, dynamic>?;
-
-//             if (userData != null) {
-//               return ListView(
-//                 children: [
-//                   const SizedBox(height: 50),
-//                   // Display user's profile image if available
-//                   if (currentUser!.photoURL != null)
-//                     Image.network(
-//                       currentUser!.photoURL!,
-//                       width: 72,
-//                       height: 72,
-//                     )
-//                   else
-//                     // Show person icon if profile image URL is null
-//                     Icon(
-//                       Icons.person,
-//                       size: 72,
-//                     ),
-
-//                   const SizedBox(height: 10),
-//                   Text(
-//                     currentUser!.displayName ?? '',
-//                     textAlign: TextAlign.center,
-//                     style: TextStyle(color: Colors.grey),
-//                   ),
-
-//                   const SizedBox(height: 50),
-//                   MyTextBox(
-//                     text: userData['email'],
-//                     sectionName: 'Email',
-//                     onPressed: () => editField(context, 'Email'),
-//                   )
-//                 ],
-//               );
-//             } else {
-//               // Handle case where snapshot data is null
-//               return Center(
-//                 child: Text('No data available'),
-//               );
-//             }
-//           }
-//         },
+//       appBar: AppBar(
+//         title: Text(
+//           'Only U Cafe',
+//           style: GoogleFonts.kaushanScript(),
+//         ),
+//         centerTitle: true,
+//         backgroundColor: const Color.fromARGB(255, 229, 202, 195),
+//       ),
+//       body: getBodyWidget(selectedIndex),
+//       // _pages[_selectedIndex],
+//       bottomNavigationBar: NavigationBar(
+//         destinations: const [
+//           NavigationDestination(icon: Icon(Icons.home), label: "Home"),
+//           NavigationDestination(icon: Icon(Icons.menu_book), label: "Menu"),
+//           NavigationDestination(icon: Icon(Icons.person), label: "Profile"),
+//         ],
+//         selectedIndex: selectedIndex,
+//         onDestinationSelected: _onDestinationSelected,
+//         indicatorColor: const Color.fromARGB(255, 229, 202, 195),
+//         animationDuration: const Duration(milliseconds: 1000),
+//         backgroundColor: Colors.white10,
+//         shadowColor: Colors.white30,
 //       ),
 //     );
 //   }
 // }
-
-// class MyTextBox extends StatelessWidget {
-//   final String? text;
-//   final String sectionName;
-//   final VoidCallback onPressed;
-
-//   const MyTextBox({
-//     Key? key,
-//     required this.text,
-//     required this.sectionName,
-//     required this.onPressed,
-//   }) : super(key: key);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return GestureDetector(
-//       onTap: onPressed,
-//       child: Container(
-//         padding: const EdgeInsets.all(8),
-//         decoration: BoxDecoration(
-//           border: Border.all(color: Colors.grey),
-//           borderRadius: BorderRadius.circular(8),
-//         ),
-//         child: Row(
-//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//           children: [
-//             Text(sectionName),
-//             Text(text ?? 'N/A'),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-class MyShell extends StatefulWidget {
-  final Widget child;
-  const MyShell({required this.child});
-
-  @override
-  _MyShellState createState() => _MyShellState();
-}
-
-class _MyShellState extends State<MyShell> {
-  int _currentIndex = 0;
-
-  final List<String> _tabs = ['/home', '/menu', '/profile'];
-
-  void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-    context.push(_tabs[index]);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Only U Cafe',
-          style: GoogleFonts.kaushanScript(),
-        ),
-        centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 229, 202, 195),
-      ),
-      body: widget.child, // This will hold the current route's content
-      // bottomNavigationBar: BottomNavigationBar(
-      //   currentIndex: _currentIndex,
-      //   onTap: _onTabTapped,
-      //   items: const [
-      //     BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-      //     BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Menu'),
-      //     BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-      //   ],
-      // ),
-      bottomNavigationBar: NavigationBar(
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.home), label: "Home"),
-          NavigationDestination(icon: Icon(Icons.menu_book), label: "Menu"),
-          NavigationDestination(icon: Icon(Icons.person), label: "Profile"),
-        ],
-        selectedIndex: _currentIndex,
-        onDestinationSelected: _onTabTapped,
-        indicatorColor: const Color.fromARGB(255, 229, 202, 195),
-        animationDuration: const Duration(milliseconds: 1000),
-        backgroundColor: Colors.white10,
-        shadowColor: Colors.white30,
-      ),
-    );
-  }
-}
