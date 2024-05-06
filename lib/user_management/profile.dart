@@ -130,7 +130,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     ElevatedButton(
                       onPressed: () async {
                         await AuthMethods().signOut();
-                        _getUserData();
                         runApp(const MyApp());
                       },
                       child: const Text("Logout"),
