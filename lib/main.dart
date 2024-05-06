@@ -1,5 +1,3 @@
-// ignore_for_file: use_key_in_widget_constructors, prefer_const_constructors, use_super_parameters
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -84,7 +82,7 @@ class _MainPageState extends State<MainPage> {
         children: [
           HomePage(onButtonPressed: _navigateToMenu),
           MenuPage(orderType: _orderType),
-          ProfilePage(),
+          const ProfilePage(),
         ],
       ),
       bottomNavigationBar: NavigationBar(
