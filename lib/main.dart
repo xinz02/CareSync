@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:onlyu_cafe/home.dart';
+import 'package:onlyu_cafe/product_management/menu.dart';
 import 'package:onlyu_cafe/user_management/firebase_options.dart';
 import 'package:onlyu_cafe/user_management/login.dart';
 import 'package:onlyu_cafe/user_management/profile.dart';
@@ -42,6 +43,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
+  const MainPage({super.key});
+
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -102,33 +105,7 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-class MenuPage extends StatelessWidget {
-  final String orderType;
-  const MenuPage({this.orderType = ''});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 248, 240, 238),
-      body: Center(
-        // child: Text("Menu Page"),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text("Menu Page"),
-            Text("Order Type: $orderType"),
-            ElevatedButton(
-              onPressed: () {
-                context.push("/signup");
-              },
-              child: const Text("Sign Up"),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 // class MainPage extends StatefulWidget {
 //   final int tab;

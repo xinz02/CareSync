@@ -39,6 +39,7 @@ class _SignUpState extends State<SignUp> {
           'email': email,
           'imgUrl': '', // default image URL for email/password sign up
           'phoneNumber': phoneNum,
+          'role': 'user'
         });
 
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
