@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:onlyu_cafe/home.dart';
+import 'package:onlyu_cafe/product_management/menu.dart';
 import 'package:onlyu_cafe/user_management/firebase_options.dart';
 import 'package:onlyu_cafe/user_management/login.dart';
 import 'package:onlyu_cafe/user_management/profile.dart';
@@ -45,6 +46,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends StatefulWidget {
+  const MainPage({super.key});
+
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -118,12 +121,8 @@ class MenuPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const SizedBox(height: 50),
-            Text("Order Type: $orderType", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 20),
-            Expanded(
-              child: CategoryMenu(),
-              ),
+            const Text("Menu Page"),
+            Text("Order Type: $orderType"),
             ElevatedButton(
               onPressed: () {
                 context.push("/signup");

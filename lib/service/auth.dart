@@ -38,7 +38,8 @@ class AuthMethods {
         "name": userDetails.displayName,
         "imgUrl": userDetails.photoURL ?? "",
         "phoneNumber": userDetails.phoneNumber ?? "",
-        "id": userDetails.uid
+        "id": userDetails.uid,
+        "role": "user"
       };
       await DatabaseMethods()
           .addUser(userDetails.uid, userInfoMap)

@@ -26,6 +26,8 @@ class _HomePageState extends State<HomePage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   String _username = 'guest';
+  // String _role = 'guest';
+  String _role = '';
 
   @override
   void initState() {
@@ -42,9 +44,21 @@ class _HomePageState extends State<HomePage> {
 
       if (userData.exists) {
         final String name = userData.get('name');
+        final String role = userData.get('role');
+        print('User name: $name');
+        print('User role: $role');
+
         setState(() {
           // Update the _username variable
           _username = name;
+          // _role = role;
+          // if (role == 'user') {
+          //   _role = '123';
+          // } else if (role == 'admin') {
+          //   _role = '345';
+          // } else {
+          //   _role = '567';
+          // }
         });
       } else {
         print('User data not found');
@@ -53,6 +67,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         // Update the _username variable
         _username = 'guest';
+        _role = '567';
       });
       print('User not logged in');
     }
@@ -77,6 +92,8 @@ class _HomePageState extends State<HomePage> {
                     "assets/images/logo.png",
                     height: 220,
                   ),
+                  //test here
+                  // Text('$_role'),
                   const SizedBox(
                     height: 25,
                   ),

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -18,15 +19,95 @@ class LoginState extends State<Login> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  String role = '';
+  // Future<void> _getUserRole() async {
+  //   final FirebaseAuth _auth = FirebaseAuth.instance;
+  //   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  //   final User? user = _auth.currentUser;
+  //   // String role = '';
+
+  //   if (user != null) {
+  //     final DocumentSnapshot userData =
+  //         await _firestore.collection('User').doc(user.uid).get();
+  //     if (userData.exists) {
+  //       // Update the role using setState
+  //       setState(() {
+  //         role = userData.get('role');
+  //       });
+  //     } else {
+  //       setState(() {
+  //         role = 'user';
+  //       });
+  //     }
+  //   } else {
+  //     setState(() {
+  //       role = 'user';
+  //     });
+  //   }
+  // }
+
   void userLogin() async {
+    String role = '';
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
       // context.go("/home");
-      runApp(const MyApp());
+      // Future<void> _getUserRole() async {
+      //   final FirebaseAuth _auth = FirebaseAuth.instance;
+      //   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+      //   final User? user = _auth.currentUser;
+      //   String role = '';
+
+      //   if (user != null) {
+      //     final DocumentSnapshot userData =
+      //         await _firestore.collection('User').doc(user.uid).get();
+
+      //     if (userData.exists) {
+      //       final String role = userData.get('role');
+      //       if (role == 'admin') {
+      //         runApp(const MyApp());
+      //         context.go("/admin");
+      //       } else if (role == 'user') {
+      //         runApp(const MyApp());
+      //         context.go("/user");
+      //       } else {
+      //         runApp(const MyApp());
+      //         context.go("/");
+      //       }
+      //     } else {
+      //       role = 'user';
+      //     }
+      //   } else {
+      //     role = 'user';
+      //   }
+      // }
+
+      // _getUserRole();
+      // if (role == 'user') {
+      //   context.go("/user");
+      // } else if (role == 'admin') {
+      //   // runApp(const MyApp());
+      //   context.go("/admin");
+      // } else {
+      //   // runApp(const MyApp());
+      //   context.go("/");
+      // }
+      // runApp(const MyApp());
+      context.go("/");
       // Navigator.of(context).popUntil((route) => route.isFirst);
+      // if (role == 'admin') {
+      //   runApp(const MyApp());
+      //   context.go("/admin");
+      // } else if (role == 'user') {
+      //   runApp(const MyApp());
+      //   context.go("/user");
+      // } else {
+      //   runApp(const MyApp());
+      //   context.go("/");
+      // }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -49,6 +130,65 @@ class LoginState extends State<Login> {
       }
     }
   }
+
+  Future<String> _getUserRole() async {
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    final User? user = _auth.currentUser;
+
+    String role = 'user'; // Default role
+
+    if (user != null) {
+      final DocumentSnapshot userData =
+          await _firestore.collection('User').doc(user.uid).get();
+      if (userData.exists) {
+        role = userData.get('role');
+      }
+    }
+
+    return role;
+  }
+
+  // void userLogin() async {
+  //   try {
+  //     await FirebaseAuth.instance.signInWithEmailAndPassword(
+  //       email: _emailController.text,
+  //       password: _passwordController.text,
+  //     );
+
+  //     // Fetch the role and wait for it to complete
+  //     String role = await _getUserRole();
+
+  //     // Navigate based on the role
+  //     if (role == 'user') {
+  //       context.go("/user");
+  //     } else if (role == 'admin') {
+  //       context.go("/admin");
+  //     } else {
+  //       context.go("/");
+  //     }
+  //   } on FirebaseAuthException catch (e) {
+  //     if (e.code == 'user-not-found') {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text(
+  //             "User does not exist",
+  //             style: TextStyle(fontSize: 20.0),
+  //           ),
+  //         ),
+  //       );
+  //     } else if (e.code == 'wrong-password') {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text(
+  //             "Wrong password, please try again",
+  //             style: TextStyle(fontSize: 20.0),
+  //           ),
+  //         ),
+  //       );
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

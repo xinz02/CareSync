@@ -1,12 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:onlyu_cafe/cart/cart.dart';
 import 'package:onlyu_cafe/home.dart';
 import 'package:onlyu_cafe/main.dart';
+import 'package:onlyu_cafe/product_management/menu.dart';
 import 'package:onlyu_cafe/user_management/login.dart';
 import 'package:onlyu_cafe/user_management/profile.dart';
 import 'package:onlyu_cafe/user_management/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:onlyu_cafe/admin/admin_main.dart';
 
 bool isAuthenticated() {
   // Check if there's a user logged in
@@ -71,13 +74,80 @@ bool isAuthenticated() {
 //   ],
 // );
 
+Future<String> _getUserRole() async {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final User? user = _auth.currentUser;
+
+  String role = 'user'; // Default role
+
+  if (user != null) {
+    final DocumentSnapshot userData =
+        await _firestore.collection('User').doc(user.uid).get();
+    if (userData.exists) {
+      role = userData.get('role');
+    }
+  }
+
+  return role;
+}
+
 GoRouter goRouter() {
   return GoRouter(
     initialLocation: '/',
     routes: [
       GoRoute(
         path: '/',
+        // builder: (context, state) //=> MainPage(),
+        //     {
+        //   String role = _getUserRole() as String;
+        //   print("user role " + role);
+        //   if (_getUserRole() == 'admin') {
+        //     print("Redirecting to admin pg");
+        //     return AdminMainPage();
+        //   } else if (_getUserRole() == 'user') {
+        //     print("Redirecting to user pg");
+        //     return MainPage();
+        //   } else {
+        //     return MainPage();
+        //   }
+        // }),
+        builder: (context, state) => FutureBuilder<String>(
+          future: _getUserRole(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // While waiting for the role, show a loading spinner or similar
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              // Handle error, maybe return an error page
+              return const Center(child: Text('Error fetching role'));
+            } else if (snapshot.hasData) {
+              String role = snapshot.data!;
+              print("User role: $role");
+
+              if (role == 'admin') {
+                print("Redirecting to admin page");
+                return AdminMainPage();
+              } else if (role == 'user') {
+                print("Redirecting to user page");
+                return MainPage();
+              } else {
+                return MainPage(); // Default to MainPage if role is not recognized
+              }
+            } else {
+              // Default case if no data or any other issues
+              return MainPage();
+            }
+          },
+        ),
+      ),
+      GoRoute(
+        path: '/user',
         builder: (context, state) => MainPage(),
+      ),
+      GoRoute(
+        path: '/admin',
+        builder: (context, state) => const AdminMainPage(),
       ),
       GoRoute(
         path: '/menu',
