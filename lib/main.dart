@@ -84,7 +84,7 @@ class _MainPageState extends State<MainPage> {
         index: _selectedIndex,
         children: [
           HomePage(onButtonPressed: _navigateToMenu),
-          MenuPage(orderType: _orderType),
+          MenuPage(),
           const ProfilePage(),
         ],
       ),
