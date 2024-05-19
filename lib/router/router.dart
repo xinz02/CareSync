@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:onlyu_cafe/cart/cart.dart';
 import 'package:onlyu_cafe/home.dart';
 import 'package:onlyu_cafe/main.dart';
-import 'package:onlyu_cafe/product_management/menu.dart';
+//import 'package:onlyu_cafe/product_management/menu.dart';
 import 'package:onlyu_cafe/user_management/login.dart';
 import 'package:onlyu_cafe/user_management/profile.dart';
 import 'package:onlyu_cafe/user_management/signup.dart';
