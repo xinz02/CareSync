@@ -1,3 +1,5 @@
+// ignore_for_file: use_key_in_widget_constructors, library_private_types_in_public_api, unnecessary_import, unused_import, prefer_const_constructors
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -8,6 +10,7 @@ import 'package:onlyu_cafe/home.dart';
 import 'package:onlyu_cafe/user_management/firebase_options.dart';
 import 'package:onlyu_cafe/user_management/login.dart';
 import 'package:onlyu_cafe/user_management/profile.dart';
+import 'package:onlyu_cafe/menu_management/category.dart';
 import 'package:onlyu_cafe/router/router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -115,8 +118,12 @@ class MenuPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text("Menu Page"),
-            Text("Order Type: $orderType"),
+            const SizedBox(height: 50),
+            Text("Order Type: $orderType", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+            Expanded(
+              child: CategoryMenu(),
+              ),
             ElevatedButton(
               onPressed: () {
                 context.push("/signup");
