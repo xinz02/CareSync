@@ -111,20 +111,12 @@ class MenuPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 248, 240, 238),
       body: Center(
-        // child: Text("Menu Page"),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const SizedBox(height: 20),
             Expanded(
               child: CategoryMenu(),
               ),
-            ElevatedButton(
-              onPressed: () {
-                context.push("/signup");
-              },
-              child: const Text("Sign Up"),
-            )
           ],
         ),
       ),

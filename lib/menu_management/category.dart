@@ -38,48 +38,60 @@ class _CategoryMenuState extends State<CategoryMenu> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                Container(
-                  height: 60,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: categories.length,
-                    itemBuilder: (context, index) {
-                      return GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedIndex = index;
-                          });
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          margin: EdgeInsets.symmetric(horizontal: 8),
-                          decoration: BoxDecoration(
-                            color: selectedIndex == index ? Color(0xFFE5CAC3) : Colors.white,
-                            border: Border.all(
-                            color: selectedIndex == index ? Colors.transparent : Colors.grey,
+    return isLoading
+        ? Center(child: CircularProgressIndicator())
+        : Column(
+            children: [
+              Container(
+                height: 60,
+                margin: EdgeInsets.symmetric(horizontal: 25),
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: categories.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectedIndex = index;
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 16),
+                        margin: EdgeInsets.only(right: index == categories.length - 1 ? 0 : 10, left: index == 0 ? 0 : 10, top: 15), 
+                        decoration: BoxDecoration(
+                          color: selectedIndex == index ? Color(0xFFE5CAC3) : Colors.transparent,
+                          border: Border.all(
+                            color: selectedIndex == index ? Colors.transparent : Colors.transparent,
                           ),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Center(
-                            child: Text(
-                              categories[index],
-                              style: TextStyle(
-                                color: selectedIndex == index ? Color(0xFF4B371C) : Colors.black,
-                              ),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Center(
+                          child: Text(
+                            categories[index],
+                            style: TextStyle(
+                              color: selectedIndex == index ? Color(0xFF4B371C) : Colors.black,
+                              fontWeight: selectedIndex == index ? FontWeight.bold : FontWeight.w400,
                             ),
                           ),
                         ),
-                      );
-                    },
+                      ),
+                    );
+                  },
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 25, vertical: 5), // Add horizontal and vertical margin here
+                child: Divider(),
+              ),// Add the Divider widget here
+              Expanded(
+                child: Center(
+                  child: Text(
+                    'Selected: ${categories[selectedIndex]}',
+                    style: TextStyle(fontSize: 24),
                   ),
                 ),
-              ],
-            ),
-    );
+              ),
+            ],
+          );
   }
 }

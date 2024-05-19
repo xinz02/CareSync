@@ -79,10 +79,10 @@ GoRouter goRouter() {
         path: '/',
         builder: (context, state) => MainPage(),
       ),
-      GoRoute(
-        path: '/menu',
-        builder: (context, state) => const MenuPage(),
-      ),
+      // GoRoute(
+      //   path: '/menu',
+      //   builder: (context, state) => const MenuPage(),
+      // ),
       GoRoute(
         path: '/cart',
         builder: (context, state) => const CartPage(),
