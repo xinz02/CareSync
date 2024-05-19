@@ -73,6 +73,7 @@
 // }
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:onlyu_cafe/product_management/edit_menu_item.dart';
 import 'package:onlyu_cafe/model/menu_item.dart';
 
 class AdminMenuPage extends StatefulWidget {
@@ -140,7 +141,18 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
                   },
                 ),
                 onTap: () {
-                  print('Tap');
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditMenuItemForm(
+                        menuItem: menuItem,
+                        onUpdate: (updatedMenuItem) {
+                          // Handle the update of the menu item
+                          // For example, update the state or perform any other action
+                        },
+                      ),
+                    ),
+                  );
                 },
               );
             },
