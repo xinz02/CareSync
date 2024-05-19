@@ -13,6 +13,7 @@ class _CategoryMenuState extends State<CategoryMenu> {
   List<String> categories = [];
   int selectedIndex = 0;
   bool isLoading = true;
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -36,12 +37,45 @@ class _CategoryMenuState extends State<CategoryMenu> {
     }
   }
 
+  void filterCategories(String query) {
+    List<String> filteredList = categories.where((category) {
+      return category.toLowerCase().contains(query.toLowerCase());
+    }).toList();
+    setState(() {
+      var filteredCategories = filteredList;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return isLoading
         ? Center(child: CircularProgressIndicator())
         : Column(
             children: [
+              Container(
+                height: 50,
+                margin: const EdgeInsets.only(top: 25),
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: TextField(
+                  controller: searchController,
+                  style: TextStyle(color: Color(0xFFB1A6A6)),
+                  decoration: InputDecoration(
+                    hintText: 'Hunt for your daily delight!',
+                    hintStyle: TextStyle(color: Color(0xFFB1A6A6)),
+                    prefixIcon: Icon(Icons.search),
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: EdgeInsets.symmetric(vertical: 0),
+                  ),
+                  onChanged: (value) {
+                    filterCategories(value);
+                  },
+                ),
+              ),
               Container(
                 height: 60,
                 margin: EdgeInsets.symmetric(horizontal: 25),
@@ -63,7 +97,7 @@ class _CategoryMenuState extends State<CategoryMenu> {
                           border: Border.all(
                             color: selectedIndex == index ? Colors.transparent : Colors.transparent,
                           ),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         child: Center(
                           child: Text(
@@ -71,6 +105,7 @@ class _CategoryMenuState extends State<CategoryMenu> {
                             style: TextStyle(
                               color: selectedIndex == index ? Color(0xFF4B371C) : Colors.black,
                               fontWeight: selectedIndex == index ? FontWeight.bold : FontWeight.w400,
+                              fontSize: 15
                             ),
                           ),
                         ),
