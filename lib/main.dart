@@ -106,9 +106,6 @@ class _MainPageState extends State<MainPage> {
 }
 
 class MenuPage extends StatelessWidget {
-  final String orderType;
-  const MenuPage({this.orderType = ''});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,8 +115,6 @@ class MenuPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const SizedBox(height: 50),
-            Text("Order Type: $orderType", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
             Expanded(
               child: CategoryMenu(),
