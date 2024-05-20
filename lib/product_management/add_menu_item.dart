@@ -322,101 +322,134 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Add Menu Item')),
+      appBar: AppBar(
+        title: const Text('Add Menu Item'),
+        backgroundColor: const Color.fromARGB(255, 229, 202, 195),
+        centerTitle: true,
+      ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  children: [
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Name'),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter a name';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _name = value!;
-                      },
-                    ),
-                    _isFetchingCategories
-                        ? Center(child: CircularProgressIndicator())
-                        : DropdownButtonFormField<String>(
-                            decoration: InputDecoration(labelText: 'Category'),
-                            value: _category,
-                            items: _categories.map((String category) {
-                              return DropdownMenuItem<String>(
-                                value: category,
-                                child: Text(category),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                _category = newValue!;
-                              });
-                            },
-                            validator: (value) {
-                              if (value == 'Please select category') {
-                                return 'Please select a valid category';
-                              }
-                              return null;
-                            },
+          ? const Center(child: CircularProgressIndicator())
+          : Container(
+              color: const Color.fromARGB(255, 248, 240, 238),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    children: [
+                      TextFormField(
+                        decoration: const InputDecoration(labelText: 'Name'),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter a name';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          _name = value!;
+                        },
+                      ),
+                      _isFetchingCategories
+                          ? const Center(child: CircularProgressIndicator())
+                          : DropdownButtonFormField<String>(
+                              decoration:
+                                  const InputDecoration(labelText: 'Category'),
+                              value: _category,
+                              items: _categories.map((String category) {
+                                return DropdownMenuItem<String>(
+                                  value: category,
+                                  child: Text(category),
+                                );
+                              }).toList(),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _category = newValue!;
+                                });
+                              },
+                              validator: (value) {
+                                if (value == 'Please select category') {
+                                  return 'Please select a valid category';
+                                }
+                                return null;
+                              },
+                            ),
+                      TextFormField(
+                        decoration:
+                            const InputDecoration(labelText: 'Description'),
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter a description';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          _description = value!;
+                        },
+                      ),
+                      TextFormField(
+                        decoration: const InputDecoration(labelText: 'Price'),
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter a price';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          _price = double.parse(value!);
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      _imageFile != null
+                          ? Image.file(
+                              _imageFile!,
+                              height: 150,
+                            )
+                          : Container(),
+                      Row(
+                        children: [
+                          const Text("Upload product image: "),
+                          const SizedBox(
+                            width: 15,
                           ),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Description'),
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter a description';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _description = value!;
-                      },
-                    ),
-                    TextFormField(
-                      decoration: InputDecoration(labelText: 'Price'),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Please enter a price';
-                        }
-                        return null;
-                      },
-                      onSaved: (value) {
-                        _price = double.parse(value!);
-                      },
-                    ),
-                    SizedBox(height: 10),
-                    _imageFile != null
-                        ? Image.file(
-                            _imageFile!,
-                            height: 150,
-                          )
-                        : Container(),
-                    ElevatedButton(
-                      onPressed: _pickImage,
-                      child: Text('Pick Image'),
-                    ),
-                    SwitchListTile(
-                      title: Text('Available'),
-                      value: _isAvailable,
-                      onChanged: (bool value) {
-                        setState(() {
-                          _isAvailable = value;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _submitForm,
-                      child: Text('Add Menu Item'),
-                    ),
-                  ],
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10))),
+                            onPressed: _pickImage,
+                            child: const Text('Pick Image'),
+                          ),
+                        ],
+                      ),
+                      SwitchListTile(
+                        title: const Text('Available'),
+                        value: _isAvailable,
+                        activeColor: Colors.green,
+                        onChanged: (bool value) {
+                          setState(() {
+                            _isAvailable = value;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: _submitForm,
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 195, 133, 134),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 15,
+                            ),
+                            elevation: 2,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10))),
+                        child: const Text(
+                          'Add Menu Item',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

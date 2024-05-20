@@ -75,6 +75,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:onlyu_cafe/product_management/edit_menu_item.dart';
 import 'package:onlyu_cafe/model/menu_item.dart';
+import 'package:onlyu_cafe/product_management/edit_menu_item.dart';
 
 class AdminMenuPage extends StatefulWidget {
   const AdminMenuPage({super.key});
@@ -86,7 +87,12 @@ class AdminMenuPage extends StatefulWidget {
 class _AdminMenuPageState extends State<AdminMenuPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Function to toggle the availability of a menu item
+  List<String> categories = [];
+  List<String> filteredCategories = [];
+  int selectedIndex = 0;
+  bool isLoading = true;
+  TextEditingController searchController = TextEditingController();
+
   Future<void> _toggleAvailability(MenuItem menuItem) async {
     try {
       await _firestore.collection('menu_items').doc(menuItem.id).update({
@@ -98,27 +104,157 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    fetchCategories();
+  }
+
+  Future<void> fetchCategories() async {
+    try {
+      QuerySnapshot snapshot = await _firestore.collection('Category').get();
+      List<String> fetchedCategories =
+          snapshot.docs.map((doc) => doc['name'] as String).toList();
+      setState(() {
+        categories = fetchedCategories;
+        filteredCategories = fetchedCategories;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching categories: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void filterCategories(String query) {
+    List<String> filteredList = categories.where((category) {
+      return category.toLowerCase().contains(query.toLowerCase());
+    }).toList();
+    setState(() {
+      filteredCategories = filteredList;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Menu Items')),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: _firestore.collection('menu_items').snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
+    return isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : Container(
+            color: const Color.fromARGB(255, 248, 240, 238),
+            child: Column(
+              children: [
+                Container(
+                  height: 50,
+                  margin: const EdgeInsets.only(top: 25),
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: TextField(
+                    controller: searchController,
+                    style: const TextStyle(color: Color(0xFFB1A6A6)),
+                    decoration: InputDecoration(
+                      hintText: 'Hunt for your daily delight!',
+                      hintStyle: const TextStyle(color: Color(0xFFB1A6A6)),
+                      prefixIcon: const Icon(Icons.search),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                    ),
+                    onChanged: (value) {
+                      filterCategories(value);
+                    },
+                  ),
+                ),
+                Container(
+                  height: 60,
+                  margin: const EdgeInsets.symmetric(horizontal: 25),
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: filteredCategories.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedIndex =
+                                categories.indexOf(filteredCategories[index]);
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          margin: EdgeInsets.only(
+                              right: index == filteredCategories.length - 1
+                                  ? 0
+                                  : 10,
+                              left: index == 0 ? 0 : 10,
+                              top: 15),
+                          decoration: BoxDecoration(
+                            color: selectedIndex ==
+                                    categories
+                                        .indexOf(filteredCategories[index])
+                                ? const Color(0xFFE5CAC3)
+                                : Colors.transparent,
+                            border: Border.all(
+                              color: selectedIndex ==
+                                      categories
+                                          .indexOf(filteredCategories[index])
+                                  ? Colors.transparent
+                                  : Colors.transparent,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Center(
+                            child: Text(
+                              filteredCategories[index],
+                              style: TextStyle(
+                                  color: selectedIndex ==
+                                          categories.indexOf(
+                                              filteredCategories[index])
+                                      ? const Color(0xFF4B371C)
+                                      : Colors.black,
+                                  fontWeight: selectedIndex ==
+                                          categories.indexOf(
+                                              filteredCategories[index])
+                                      ? FontWeight.bold
+                                      : FontWeight.w400,
+                                  fontSize: 15),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                Container(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                  child: const Divider(),
+                ),
+                Expanded(
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: _firestore
+                        .collection('menu_items')
+                        .where('category', isEqualTo: categories[selectedIndex])
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
 
-          if (snapshot.hasError) {
-            return Center(child: Text('Error fetching menu items'));
-          }
+                      if (snapshot.hasError) {
+                        return const Center(
+                            child: Text('Error fetching menu items'));
+                      }
 
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text('No menu items found'));
-          }
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return const Center(child: Text('No menu items found'));
+                      }
 
-          List<MenuItem> menuItems = snapshot.data!.docs
-              .map((doc) => MenuItem.fromDocument(doc))
-              .toList();
+                      List<MenuItem> menuItems = snapshot.data!.docs
+                          .map((doc) => MenuItem.fromDocument(doc))
+                          .toList();
 
           return ListView.separated(
             itemCount: menuItems.length,
@@ -141,18 +277,7 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
                   },
                 ),
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditMenuItemForm(
-                        menuItem: menuItem,
-                        onUpdate: (updatedMenuItem) {
-                          // Handle the update of the menu item
-                          // For example, update the state or perform any other action
-                        },
-                      ),
-                    ),
-                  );
+                  print('Tap');
                 },
               );
             },
