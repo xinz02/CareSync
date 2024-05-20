@@ -74,6 +74,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:onlyu_cafe/model/menu_item.dart';
+import 'package:onlyu_cafe/product_management/edit_menu_item.dart';
 
 class AdminMenuPage extends StatefulWidget {
   const AdminMenuPage({super.key});
@@ -86,6 +87,7 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   List<String> categories = [];
+  List<String> filteredCategories = [];
   int selectedIndex = 0;
   bool isLoading = true;
   TextEditingController searchController = TextEditingController();
@@ -113,6 +115,7 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
           snapshot.docs.map((doc) => doc['name'] as String).toList();
       setState(() {
         categories = fetchedCategories;
+        filteredCategories = fetchedCategories;
         isLoading = false;
       });
     } catch (e) {
@@ -128,7 +131,7 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
       return category.toLowerCase().contains(query.toLowerCase());
     }).toList();
     setState(() {
-      var filteredCategories = filteredList;
+      filteredCategories = filteredList;
     });
   }
 
@@ -140,8 +143,6 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
             color: const Color.fromARGB(255, 248, 240, 238),
             child: Column(
               children: [
-                // Your search bar and category selector code remains the same
-                // ...
                 Container(
                   height: 50,
                   margin: const EdgeInsets.only(top: 25),
@@ -171,26 +172,33 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
                   margin: const EdgeInsets.symmetric(horizontal: 25),
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: categories.length,
+                    itemCount: filteredCategories.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
                         onTap: () {
                           setState(() {
-                            selectedIndex = index;
+                            selectedIndex =
+                                categories.indexOf(filteredCategories[index]);
                           });
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           margin: EdgeInsets.only(
-                              right: index == categories.length - 1 ? 0 : 10,
+                              right: index == filteredCategories.length - 1
+                                  ? 0
+                                  : 10,
                               left: index == 0 ? 0 : 10,
                               top: 15),
                           decoration: BoxDecoration(
-                            color: selectedIndex == index
+                            color: selectedIndex ==
+                                    categories
+                                        .indexOf(filteredCategories[index])
                                 ? const Color(0xFFE5CAC3)
                                 : Colors.transparent,
                             border: Border.all(
-                              color: selectedIndex == index
+                              color: selectedIndex ==
+                                      categories
+                                          .indexOf(filteredCategories[index])
                                   ? Colors.transparent
                                   : Colors.transparent,
                             ),
@@ -198,12 +206,16 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
                           ),
                           child: Center(
                             child: Text(
-                              categories[index],
+                              filteredCategories[index],
                               style: TextStyle(
-                                  color: selectedIndex == index
+                                  color: selectedIndex ==
+                                          categories.indexOf(
+                                              filteredCategories[index])
                                       ? const Color(0xFF4B371C)
                                       : Colors.black,
-                                  fontWeight: selectedIndex == index
+                                  fontWeight: selectedIndex ==
+                                          categories.indexOf(
+                                              filteredCategories[index])
                                       ? FontWeight.bold
                                       : FontWeight.w400,
                                   fontSize: 15),
@@ -215,12 +227,10 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
                   ),
                 ),
                 Container(
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 25,
-                      vertical: 5), // Add horizontal and vertical margin here
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 25, vertical: 5),
                   child: const Divider(),
-                ), // Add the Divider widget here
-
+                ),
                 Expanded(
                   child: StreamBuilder<QuerySnapshot>(
                     stream: _firestore
@@ -229,15 +239,16 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
                         .snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       }
 
                       if (snapshot.hasError) {
-                        return Center(child: Text('Error fetching menu items'));
+                        return const Center(
+                            child: Text('Error fetching menu items'));
                       }
 
                       if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return Center(child: Text('No menu items found'));
+                        return const Center(child: Text('No menu items found'));
                       }
 
                       List<MenuItem> menuItems = snapshot.data!.docs
@@ -252,7 +263,7 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
                             leading: menuItem.imageUrl.isNotEmpty
                                 ? Image.network(menuItem.imageUrl,
                                     width: 60, height: 60, fit: BoxFit.cover)
-                                : Icon(Icons.image),
+                                : const Icon(Icons.image),
                             title: Text(menuItem.name),
                             subtitle: Text(
                                 '${menuItem.description}\n${menuItem.price.toStringAsFixed(2)}'),
@@ -265,7 +276,18 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
                               },
                             ),
                             onTap: () {
-                              print('Tap');
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditMenuItemForm(
+                                    menuItem: menuItem,
+                                    onUpdate: (updatedMenuItem) {
+                                      // Handle the update of the menu item
+                                      // For example, update the state or perform any other action
+                                    },
+                                  ),
+                                ),
+                              );
                             },
                           );
                         },
