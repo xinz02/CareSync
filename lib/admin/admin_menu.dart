@@ -134,7 +134,9 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading
+    return Scaffold(
+      backgroundColor: Color.fromARGB(255, 248, 240, 238),
+      body: isLoading
         ? const Center(child: CircularProgressIndicator())
         : Column(
             children: [
@@ -246,35 +248,39 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
                       itemCount: menuItems.length,
                       itemBuilder: (context, index) {
                         MenuItem menuItem = menuItems[index];
-                        return ListTile(
-                          leading: menuItem.imageUrl.isNotEmpty
-                              ? Image.network(menuItem.imageUrl,
-                                  width: 60, height: 60, fit: BoxFit.cover)
-                              : Icon(Icons.image),
-                          title: Text(menuItem.name),
-                          subtitle: Text(
-                              '${menuItem.description}\n${menuItem.price.toStringAsFixed(2)}'),
-                          isThreeLine: true,
-                          trailing: Switch(
-                            activeColor: Colors.green,
-                            value: menuItem.isAvailable,
-                            onChanged: (value) {
-                              _toggleAvailability(menuItem);
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: ListTile(
+                           leading: menuItem.imageUrl.isNotEmpty
+                                ? Image.network(menuItem.imageUrl,
+                                   width: 60, height: 60, fit: BoxFit.cover)
+                                : Icon(Icons.image),
+                            title: Text(menuItem.name),
+                            subtitle: Text(
+                                '${menuItem.description}\n${menuItem.price.toStringAsFixed(2)}'),
+                            isThreeLine: true,
+                            trailing: Switch(
+                             activeColor: Colors.green,
+                              value: menuItem.isAvailable,
+                              onChanged: (value) {
+                               _toggleAvailability(menuItem);
+                              },
+                            ),
+                            onTap: () {
+                              print('Tap');
                             },
-                          ),
-                          onTap: () {
-                            print('Tap');
-                          },
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const Divider();
-                      },
-                    );
-                  },
+                           )
+                          );
+                        },
+                       separatorBuilder: (context, index) {
+                          return const Divider();
+                        },
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
-          );
+              ],
+            )
+    );
   }
 }
