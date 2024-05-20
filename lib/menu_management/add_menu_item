@@ -31,7 +31,7 @@ class _AddMenuItemPageState extends State<AddMenuItemPage> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      setState(() {
+      setState(() {  
         _isLoading = true;
       });
 
