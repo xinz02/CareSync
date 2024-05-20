@@ -211,139 +211,142 @@ class _MenuPageState extends State<MenuPage> {
   Widget build(BuildContext context) {
     return isLoading
         ? const Center(child: CircularProgressIndicator())
-        : Column(
-            children: [
-              // Your search bar and category selector code remains the same
-              // ...
-              Container(
-                height: 50,
-                margin: const EdgeInsets.only(top: 25),
-                padding: const EdgeInsets.symmetric(horizontal: 25),
-                child: TextField(
-                  controller: searchController,
-                  style: const TextStyle(color: Color(0xFFB1A6A6)),
-                  decoration: InputDecoration(
-                    hintText: 'Hunt for your daily delight!',
-                    hintStyle: const TextStyle(color: Color(0xFFB1A6A6)),
-                    prefixIcon: const Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                  ),
-                  onChanged: (value) {
-                    filterCategories(value);
-                  },
-                ),
-              ),
-              Container(
-                height: 60,
-                margin: const EdgeInsets.symmetric(horizontal: 25),
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: categories.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectedIndex = index;
-                        });
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        margin: EdgeInsets.only(
-                            right: index == categories.length - 1 ? 0 : 10,
-                            left: index == 0 ? 0 : 10,
-                            top: 15),
-                        decoration: BoxDecoration(
-                          color: selectedIndex == index
-                              ? const Color(0xFFE5CAC3)
-                              : Colors.transparent,
-                          border: Border.all(
-                            color: selectedIndex == index
-                                ? Colors.transparent
-                                : Colors.transparent,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Center(
-                          child: Text(
-                            categories[index],
-                            style: TextStyle(
-                                color: selectedIndex == index
-                                    ? const Color(0xFF4B371C)
-                                    : Colors.black,
-                                fontWeight: selectedIndex == index
-                                    ? FontWeight.bold
-                                    : FontWeight.w400,
-                                fontSize: 15),
-                          ),
-                        ),
+        : Container(
+            color: const Color.fromARGB(255, 248, 240, 238),
+            child: Column(
+              children: [
+                // Your search bar and category selector code remains the same
+                // ...
+                Container(
+                  height: 50,
+                  margin: const EdgeInsets.only(top: 25),
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
+                  child: TextField(
+                    controller: searchController,
+                    style: const TextStyle(color: Color(0xFFB1A6A6)),
+                    decoration: InputDecoration(
+                      hintText: 'Hunt for your daily delight!',
+                      hintStyle: const TextStyle(color: Color(0xFFB1A6A6)),
+                      prefixIcon: const Icon(Icons.search),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide.none,
                       ),
-                    );
-                  },
+                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                    ),
+                    onChanged: (value) {
+                      filterCategories(value);
+                    },
+                  ),
                 ),
-              ),
-              Container(
-                margin: const EdgeInsets.symmetric(
-                    horizontal: 25,
-                    vertical: 5), // Add horizontal and vertical margin here
-                child: const Divider(),
-              ), // Add the Divider widget here
-
-              Expanded(
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: _firestore
-                      .collection('menu_items')
-                      .where('category', isEqualTo: categories[selectedIndex])
-                      .where('isAvailable', isEqualTo: true)
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(child: CircularProgressIndicator());
-                    }
-
-                    if (snapshot.hasError) {
-                      return Center(child: Text('Error fetching menu items'));
-                    }
-
-                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return Center(child: Text('No menu items found'));
-                    }
-
-                    List<MenuItem> menuItems = snapshot.data!.docs
-                        .map((doc) => MenuItem.fromDocument(doc))
-                        .toList();
-
-                    return ListView.separated(
-                      itemCount: menuItems.length,
-                      itemBuilder: (context, index) {
-                        MenuItem menuItem = menuItems[index];
-                        return ListTile(
-                          leading: menuItem.imageUrl.isNotEmpty
-                              ? Image.network(menuItem.imageUrl,
-                                  width: 60, height: 60, fit: BoxFit.cover)
-                              : Icon(Icons.image),
-                          title: Text(menuItem.name),
-                          subtitle: Text(
-                              '${menuItem.description}\n${menuItem.price.toStringAsFixed(2)}'),
-                          isThreeLine: true,
-                          onTap: () {
-                            print('Tap');
-                          },
-                        );
-                      },
-                      separatorBuilder: (context, index) {
-                        return const Divider();
-                      },
-                    );
-                  },
+                Container(
+                  height: 60,
+                  margin: const EdgeInsets.symmetric(horizontal: 25),
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: categories.length,
+                    itemBuilder: (context, index) {
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedIndex = index;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          margin: EdgeInsets.only(
+                              right: index == categories.length - 1 ? 0 : 10,
+                              left: index == 0 ? 0 : 10,
+                              top: 15),
+                          decoration: BoxDecoration(
+                            color: selectedIndex == index
+                                ? const Color(0xFFE5CAC3)
+                                : Colors.transparent,
+                            border: Border.all(
+                              color: selectedIndex == index
+                                  ? Colors.transparent
+                                  : Colors.transparent,
+                            ),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Center(
+                            child: Text(
+                              categories[index],
+                              style: TextStyle(
+                                  color: selectedIndex == index
+                                      ? const Color(0xFF4B371C)
+                                      : Colors.black,
+                                  fontWeight: selectedIndex == index
+                                      ? FontWeight.bold
+                                      : FontWeight.w400,
+                                  fontSize: 15),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+                Container(
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 25,
+                      vertical: 5), // Add horizontal and vertical margin here
+                  child: const Divider(),
+                ), // Add the Divider widget here
+
+                Expanded(
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: _firestore
+                        .collection('menu_items')
+                        .where('category', isEqualTo: categories[selectedIndex])
+                        .where('isAvailable', isEqualTo: true)
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Error fetching menu items'));
+                      }
+
+                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                        return Center(child: Text('No menu items found'));
+                      }
+
+                      List<MenuItem> menuItems = snapshot.data!.docs
+                          .map((doc) => MenuItem.fromDocument(doc))
+                          .toList();
+
+                      return ListView.separated(
+                        itemCount: menuItems.length,
+                        itemBuilder: (context, index) {
+                          MenuItem menuItem = menuItems[index];
+                          return ListTile(
+                            leading: menuItem.imageUrl.isNotEmpty
+                                ? Image.network(menuItem.imageUrl,
+                                    width: 60, height: 60, fit: BoxFit.cover)
+                                : Icon(Icons.image),
+                            title: Text(menuItem.name),
+                            subtitle: Text(
+                                '${menuItem.description}\n${menuItem.price.toStringAsFixed(2)}'),
+                            isThreeLine: true,
+                            onTap: () {
+                              print('Tap');
+                            },
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return const Divider();
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           );
   }
 }
