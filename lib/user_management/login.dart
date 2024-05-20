@@ -202,6 +202,9 @@ class LoginState extends State<Login> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          SizedBox(
+            height: 10,
+          ),
           Image.asset(
             "assets/images/logo.png",
             height: 200,
@@ -291,7 +294,7 @@ class LoginState extends State<Login> {
                         backgroundColor:
                             const Color.fromARGB(255, 195, 133, 134),
                         padding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 125),
+                            vertical: 10, horizontal: 110),
                         elevation: 2,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
@@ -317,7 +320,7 @@ class LoginState extends State<Login> {
                         color: Color.fromARGB(255, 195, 133, 134),
                       ),
                       // color: Colors.white,
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
