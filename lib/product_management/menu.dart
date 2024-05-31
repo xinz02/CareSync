@@ -147,8 +147,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:onlyu_cafe/model/menu_item.dart';
+import 'package:onlyu_cafe/product_management/view_product_details.dart';
+import 'package:onlyu_cafe/router/router.dart';
+import 'package:onlyu_cafe/service/cart_service.dart';
 
 class MenuPage extends StatefulWidget {
   final String orderType;
@@ -333,8 +337,28 @@ class _MenuPageState extends State<MenuPage> {
                             subtitle: Text(
                                 '${menuItem.description}\n${menuItem.price.toStringAsFixed(2)}'),
                             isThreeLine: true,
+                            trailing: IconButton(
+                              icon: Icon(Icons.add_shopping_cart),
+                              onPressed: () {
+                                if (!isAuthenticated()) {
+                                  context.go("/login");
+                                } else {
+                                  CartService().addtoCart(menuItem.id);
+                                }
+                              },
+                            ),
                             onTap: () {
-                              print('Tap');
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ViewProductDetails(
+                                      item: menuItem,
+                                    ),
+                                  ));
+
+                              setState(() {
+                                selectedIndex = index;
+                              });
                             },
                           );
                         },
