@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:onlyu_cafe/cart/cart.dart';
 import 'package:onlyu_cafe/home.dart';
 import 'package:onlyu_cafe/main.dart';
+import 'package:onlyu_cafe/order/checkout.dart';
 import 'package:onlyu_cafe/product_management/menu.dart';
 import 'package:onlyu_cafe/user_management/login.dart';
 import 'package:onlyu_cafe/user_management/profile.dart';
@@ -155,7 +156,7 @@ GoRouter goRouter() {
       ),
       GoRoute(
         path: '/cart',
-        builder: (context, state) => const CartPage(),
+        builder: (context, state) => CartPage(),
       ),
       GoRoute(
         path: '/signup',
@@ -164,6 +165,10 @@ GoRouter goRouter() {
       GoRoute(
         path: '/login',
         builder: (context, state) => const Login(),
+      ),
+      GoRoute(
+        path: '/checkout',
+        builder: (context, state) => const CheckOutPage(),
       ),
       // GoRoute(
       //   path: '/home/:tab',

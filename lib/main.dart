@@ -11,6 +11,7 @@ import 'package:onlyu_cafe/user_management/login.dart';
 import 'package:onlyu_cafe/user_management/profile.dart';
 import 'package:onlyu_cafe/router/router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:badges/badges.dart' as badges;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -79,6 +80,31 @@ class _MainPageState extends State<MainPage> {
         ),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 229, 202, 195),
+        actions: <Widget>[
+          ElevatedButton(
+              onPressed: () {
+                if (!isAuthenticated()) {
+                  context.go("/login");
+                } else {
+                  context.push("/cart");
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 229, 202, 195),
+                padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0)),
+              ),
+              child: badges.Badge(
+                position: badges.BadgePosition.topEnd(top: -10, end: -10),
+                badgeContent: const Text(
+                  "23",
+                  style: TextStyle(fontSize: 10, color: Colors.white),
+                ),
+                child: const Icon(Icons.shopping_cart),
+              )),
+        ],
       ),
       body: IndexedStack(
         index: _selectedIndex,
