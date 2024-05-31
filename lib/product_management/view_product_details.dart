@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:onlyu_cafe/model/menu_item.dart';
+import 'package:onlyu_cafe/router/router.dart';
+import 'package:onlyu_cafe/service/cart_service.dart';
 
 class ViewProductDetails extends StatefulWidget {
   final MenuItem item;
@@ -20,22 +23,12 @@ class _ViewProductDetailsState extends State<ViewProductDetails> {
         centerTitle: true,
       ),
       backgroundColor: const Color.fromARGB(255, 248, 240, 238),
-      // body: const Center(
-      //   child: Column(
-      //     mainAxisAlignment: MainAxisAlignment.center,
-      //     children: <Widget>[
-      //       Text(
-      //         'View Details Page',
-      //       ),
-      //     ],
-      //   ),
-      // ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Center(
@@ -45,7 +38,7 @@ class _ViewProductDetailsState extends State<ViewProductDetails> {
                     ? NetworkImage(widget.item.imageUrl)
                     : null,
                 child: widget.item.imageUrl.isEmpty
-                    ? Icon(
+                    ? const Icon(
                         Icons.image,
                         size: 85,
                         color: Colors.grey,
@@ -84,17 +77,25 @@ class _ViewProductDetailsState extends State<ViewProductDetails> {
               height: 50,
             ),
             ElevatedButton(
-                onPressed: () {
-                  print("Added to cart");
-                },
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 246, 231, 232),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 52),
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10))),
-                child: const Text("Add Item to Cart"))
+              onPressed: () {
+                if (!isAuthenticated()) {
+                  context.go("/login");
+                } else {
+                  CartService().addtoCart(widget.item.id);
+                  Navigator.pop(context);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 246, 231, 232),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 15, horizontal: 52),
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text("Add Item to Cart"),
+            ),
           ],
         ),
       ),

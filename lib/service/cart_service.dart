@@ -110,4 +110,60 @@ class CartService {
       });
     }
   }
+
+  // Future<int> getItemQuantity() async {
+  //   try {
+  //     DocumentSnapshot<Map<String, dynamic>> docSnapShot =
+  //         await FirebaseFirestore.instance.collection('cart').doc(userId).get();
+
+  //     if (docSnapShot.exists && docSnapShot.data() != null) {
+  //       Map<String, dynamic> data = docSnapShot.data()!;
+  //       List<dynamic> cartList = data['cartList'];
+
+  //       int totalQuantity = 0;
+
+  //       for (var item in cartList) {
+  //         totalQuantity += (item['quantity'] as num).toInt();
+  //       }
+
+  //       return totalQuantity;
+  //     } else {
+  //       return 0;
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching cart items: $e');
+  //     return 0;
+  //   }
+  // }
+  Future<int> getItemQuantity() async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> docSnapShot =
+          await FirebaseFirestore.instance.collection('cart').doc(userId).get();
+
+      if (docSnapShot.exists && docSnapShot.data() != null) {
+        Map<String, dynamic> data = docSnapShot.data()!;
+        List<dynamic> cartList = data['cartList'];
+
+        int totalQuantity = 0;
+
+        for (var item in cartList) {
+          totalQuantity += (item['quantity'] as num).toInt();
+        }
+
+        return totalQuantity;
+      } else {
+        return 0;
+      }
+    } catch (e) {
+      print('Error fetching cart items: $e');
+      return 0;
+    }
+  }
+
+  Stream<DocumentSnapshot<Map<String, dynamic>>> getCartStream() {
+    return FirebaseFirestore.instance
+        .collection('cart')
+        .doc(userId)
+        .snapshots();
+  }
 }
