@@ -102,7 +102,7 @@ class _MainPageState extends State<MainPage> {
               child: badges.Badge(
                 position: badges.BadgePosition.topEnd(top: -10, end: -10),
                 badgeContent: const Text(
-                  "23",
+                  "3",
                   style: TextStyle(fontSize: 10, color: Colors.white),
                 ),
                 child: const Icon(Icons.shopping_cart),
