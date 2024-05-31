@@ -1,5 +1,3 @@
-// ignore_for_file: use_key_in_widget_constructors, library_private_types_in_public_api, unnecessary_import, unused_import, prefer_const_constructors
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -11,7 +9,6 @@ import 'package:onlyu_cafe/product_management/menu.dart';
 import 'package:onlyu_cafe/user_management/firebase_options.dart';
 import 'package:onlyu_cafe/user_management/login.dart';
 import 'package:onlyu_cafe/user_management/profile.dart';
-import 'package:onlyu_cafe/menu_management/category.dart';
 import 'package:onlyu_cafe/router/router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:badges/badges.dart' as badges;
@@ -134,33 +131,7 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-class MenuPage extends StatelessWidget {
-  final String orderType;
-  const MenuPage({this.orderType = ''});
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 248, 240, 238),
-      body: Center(
-        // child: Text("Menu Page"),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text("Menu Page"),
-            Text("Order Type: $orderType"),
-            ElevatedButton(
-              onPressed: () {
-                context.push("/signup");
-              },
-              child: const Text("Sign Up"),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 // class MainPage extends StatefulWidget {
 //   final int tab;

@@ -544,6 +544,6 @@ class _AdminMenuPageState extends State<AdminMenuPage> {
                 ),
               ],
             ),
-          );
+    ));
   }
 }
