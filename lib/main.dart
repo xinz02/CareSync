@@ -53,7 +53,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
-  String _orderType = '';
+  // String _orderType = '';
   int _itemQuantity = 0;
   late Stream<DocumentSnapshot<Map<String, dynamic>>> _cartStream;
 
@@ -75,7 +75,7 @@ class _MainPageState extends State<MainPage> {
   void _navigateToMenu(String orderType) {
     setState(() {
       _selectedIndex = 1; // Switch to the Menu tab
-      _orderType = orderType; // Set the order type
+      // _orderType = orderType; // Set the order type
     });
   }
 
@@ -148,7 +148,7 @@ class _MainPageState extends State<MainPage> {
         index: _selectedIndex,
         children: [
           HomePage(onButtonPressed: _navigateToMenu),
-          MenuPage(orderType: _orderType),
+          MenuPage(), //orderType: _orderType),
           const ProfilePage(),
         ],
       ),
