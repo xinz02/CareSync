@@ -51,14 +51,6 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           // Update the _username variable
           _username = name;
-          // _role = role;
-          // if (role == 'user') {
-          //   _role = '123';
-          // } else if (role == 'admin') {
-          //   _role = '345';
-          // } else {
-          //   _role = '567';
-          // }
         });
       } else {
         print('User data not found');

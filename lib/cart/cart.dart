@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:onlyu_cafe/model/cart_item.dart';
 import 'package:onlyu_cafe/service/cart_service.dart';
@@ -14,6 +15,9 @@ class _CartPageState extends State<CartPage> {
   bool isLoading = true;
   String? errorMessage;
   double totalPrice = 0;
+  double gst = 0;
+  double serviceTax = 0;
+  double finalAmount = 0;
 
   @override
   void initState() {
@@ -33,6 +37,9 @@ class _CartPageState extends State<CartPage> {
         cartItems = items;
         isLoading = false;
         _calculateTotalPrice();
+        _calculateGST();
+        _calculateServiceTax();
+        _calculateFinalTotalPrice();
       });
     } catch (error) {
       setState(() {
@@ -67,12 +74,46 @@ class _CartPageState extends State<CartPage> {
     });
   }
 
+  void _calculateGST() {
+    double total = 0;
+    for (var item in cartItems) {
+      total += _calculateSubtotal(item.menuItem.price, item.quantity);
+    }
+    setState(() {
+      gst = total * 0.05;
+    });
+    // return price * 0.05;
+  }
+
+  void _calculateServiceTax() {
+    double total = 0;
+    for (var item in cartItems) {
+      total += _calculateSubtotal(item.menuItem.price, item.quantity);
+    }
+    setState(() {
+      serviceTax = total * 0.05;
+    });
+    // return price * 0.05;
+  }
+
+  void _calculateFinalTotalPrice() {
+    double total = 0;
+    for (var item in cartItems) {
+      total += _calculateSubtotal(item.menuItem.price, item.quantity);
+    }
+
+    total = gst + serviceTax + total;
+    setState(() {
+      finalAmount = total;
+    });
+  }
+
   void _showRemoveItemDialog(String itemId, int newQuantity) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Remove Cart Item"),
+          title: const Text("Remove Cart Item"),
           content: const Text('Do you want to remove this cart item?'),
           actions: <Widget>[
             TextButton(
@@ -89,6 +130,114 @@ class _CartPageState extends State<CartPage> {
               child: const Text('Yes'),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  void _showBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(
+                height: 5,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Subtotal:',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+                  ),
+                  Text(
+                    'RM${totalPrice.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.normal),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 2,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Service Tax (5%):',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+                  ),
+                  Text(
+                    'RM${serviceTax.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.normal),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 2,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'GST (5%):',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
+                  ),
+                  Text(
+                    'RM${gst.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.normal),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 7,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Total:',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    'RM${finalAmount.toStringAsFixed(2)}',
+                    style: const TextStyle(
+                        fontSize: 22, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close the bottom sheet
+                  context.push("/checkout");
+                },
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 195, 133, 134),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 130),
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10))),
+                child: const Text(
+                  "Checkout",
+                  style: TextStyle(color: Colors.white, fontSize: 15),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -114,7 +263,7 @@ class _CartPageState extends State<CartPage> {
         centerTitle: true,
       ),
       body: isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : errorMessage != null
@@ -134,26 +283,29 @@ class _CartPageState extends State<CartPage> {
                           return Card(
                             color: Colors.white,
                             elevation: 0,
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
                             child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 12),
                               leading:
                                   cartItems[index].menuItem.imageUrl.isNotEmpty
                                       ? Image.network(
                                           cartItems[index].menuItem.imageUrl,
-                                          width: 60,
-                                          height: 60,
+                                          width: 75,
+                                          height: 85,
                                           fit: BoxFit.cover)
-                                      : Icon(Icons.image),
+                                      : const Icon(Icons.image),
                               title: Text(
                                 cartItems[index].menuItem.name,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                               subtitle: Row(
                                 children: [
                                   IconButton(
-                                    color: Color.fromARGB(255, 195, 133, 134),
+                                    color: const Color.fromARGB(
+                                        255, 195, 133, 134),
                                     icon: const Icon(Icons.remove),
                                     onPressed: () {
                                       int newQuantity =
@@ -169,9 +321,12 @@ class _CartPageState extends State<CartPage> {
                                       }
                                     },
                                   ),
-                                  Text('${cartItems[index].quantity}'),
+                                  Text(
+                                    '${cartItems[index].quantity}',
+                                  ),
                                   IconButton(
-                                    color: Color.fromARGB(255, 195, 133, 134),
+                                    color: const Color.fromARGB(
+                                        255, 195, 133, 134),
                                     icon: const Icon(Icons.add),
                                     onPressed: () {
                                       int newQuantity =
@@ -185,9 +340,13 @@ class _CartPageState extends State<CartPage> {
                               ),
                               trailing: Column(
                                 crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'RM${subtotal.toStringAsFixed(2)}',
+                                    'RM ${subtotal.toStringAsFixed(2)}',
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
                                   ),
                                 ],
                               ),
@@ -196,29 +355,56 @@ class _CartPageState extends State<CartPage> {
                         },
                       ),
                     ),
-                    Container(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      color: Colors.white,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Total:',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
+                    GestureDetector(
+                      onTap: _showBottomSheet,
+                      child: Container(
+                        color: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Total:',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  Text(
+                                    'RM${finalAmount.toStringAsFixed(2)}',
+                                    style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              ElevatedButton(
+                                onPressed: () {
+                                  context.push("/checkout");
+                                },
+                                child: const Text(
+                                  "Checkout",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 15),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color.fromARGB(
+                                        255, 195, 133, 134),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 15, horizontal: 130),
+                                    elevation: 2,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10))),
+                              ),
+                            ],
                           ),
-                          Text(
-                            'RM${totalPrice.toStringAsFixed(2)}',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold),
-                          ),
-                          ElevatedButton(
-                              onPressed: () {
-                                context.push("/checkout");
-                              },
-                              child: Text("Checkout")),
-                        ],
+                        ),
                       ),
                     ),
                   ],

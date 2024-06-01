@@ -343,7 +343,13 @@ class _MenuPageState extends State<MenuPage> {
                                 if (!isAuthenticated()) {
                                   context.go("/login");
                                 } else {
-                                  CartService().addtoCart(menuItem.id);
+                                  // CartService().addtoCart(menuItem.id);
+                                  CartService()
+                                      .addtoCart(menuItem.id)
+                                      .then((_) {
+                                    context.push("/cart",
+                                        extra: widget.orderType);
+                                  });
                                 }
                               },
                             ),
