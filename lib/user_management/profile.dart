@@ -1,12 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:onlyu_cafe/main.dart';
+import 'package:onlyu_cafe/model/cart_item.dart';
 import 'package:onlyu_cafe/router/router.dart';
 import 'package:onlyu_cafe/service/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({Key? key}) : super(key: key);
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -14,20 +15,20 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final User? currentUser = FirebaseAuth.instance.currentUser;
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   String _username = '';
   String _email = '';
   String _phoneNum = '';
+  List<DocumentSnapshot> _orders = [];
 
   @override
   void initState() {
     super.initState();
     if (isAuthenticated()) {
       _getUserData();
+      _getUserOrders();
     }
   }
 
@@ -43,7 +44,6 @@ class _ProfilePageState extends State<ProfilePage> {
         final String email = userData.get('email');
         final String phoneNum = userData.get('phoneNumber') ?? '';
         setState(() {
-          // Update the _username variable
           _username = name;
           _email = email;
           _phoneNum = phoneNum;
@@ -53,12 +53,27 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     } else {
       setState(() {
-        // Update the _username variable
         _username = 'guest';
         _email = 'guest@gmail.com';
         _phoneNum = '0123456789';
       });
       print('User not logged in');
+    }
+  }
+
+  Future<void> _getUserOrders() async {
+    final User? user = _auth.currentUser;
+
+    if (user != null) {
+      final QuerySnapshot ordersSnapshot = await _firestore
+          .collection('orders')
+          .where('userId', isEqualTo: user.uid)
+          .orderBy('timestamp', descending: true)
+          .get();
+
+      setState(() {
+        _orders = ordersSnapshot.docs;
+      });
     }
   }
 
@@ -69,7 +84,6 @@ class _ProfilePageState extends State<ProfilePage> {
       body: ListView(
         children: [
           const SizedBox(height: 50),
-          // Display user's profile image if available
           if (currentUser!.photoURL != null)
             Image.network(
               currentUser!.photoURL!,
@@ -77,7 +91,6 @@ class _ProfilePageState extends State<ProfilePage> {
               height: 72,
             )
           else
-            // Show person icon if profile image URL is null
             const Icon(
               Icons.person,
               size: 72,
@@ -101,25 +114,24 @@ class _ProfilePageState extends State<ProfilePage> {
 
           const SizedBox(height: 10),
           MyTextBox(
-            text: _username, //currentUser!.displayName ?? 'N/A',
+            text: _username,
             sectionName: 'Name',
-            editable: false, // Make it editable
-            // onPressed: () => editField(context, 'name'),
+            editable: false,
           ),
 
           const SizedBox(height: 10),
           MyTextBox(
-            text: _email, //currentUser!.email ?? 'N/A',
+            text: _email,
             sectionName: 'Email',
-            editable: false, // Make it read-only
+            editable: false,
           ),
 
           const SizedBox(height: 10),
           MyTextBox(
-            text: _phoneNum, // Update with actual phone number
+            text: _phoneNum,
             sectionName: 'Phone',
-            editable: true, // Make it editable
-            onPressed: () => _editPhone(context), //editField(context, 'Phone'),
+            editable: true,
+            onPressed: () => _editPhone(context),
           ),
           const SizedBox(
             height: 15,
@@ -137,6 +149,39 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 )
               : Container(),
+
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Text(
+              'My Orders',
+              style: TextStyle(
+                color: Color(0xFF4B371C),
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          // Display orders
+          _orders.isEmpty
+              ? const Center(child: Text("No orders found"))
+              : ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: _orders.length,
+                  itemBuilder: (context, index) {
+                    final order = _orders[index];
+                    return ListTile(
+                      title: Text('Order ID: ${order.id}'),
+                      subtitle: Text(
+                          'Date Placed: ${order['timestamp'].toDate().toString()}'),
+                      trailing: Text(
+                          'Amount Paid: \$${order['totalAmount'].toStringAsFixed(2)}'),
+                    );
+                  },
+                ),
         ],
       ),
     );
@@ -154,7 +199,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
     String newPhone = _phoneNum;
 
-    // Show an alert dialog for editing the phone number
     await showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -172,10 +216,8 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           TextButton(
             onPressed: () async {
-              // Only update if a new phone number is provided
               if (newPhone.isNotEmpty && newPhone != _phoneNum) {
                 try {
-                  // Update Firestore with the new phone number
                   await FirebaseFirestore.instance
                       .collection('User')
                       .doc(user.uid)
@@ -210,14 +252,14 @@ class MyTextBox extends StatelessWidget {
   final String text;
   final String sectionName;
   final VoidCallback? onPressed;
-  final bool editable; // New parameter to control editability
+  final bool editable;
 
   const MyTextBox({
     Key? key,
     required this.text,
     required this.sectionName,
     this.onPressed,
-    this.editable = true, // Default to true for editable
+    this.editable = true,
   }) : super(key: key);
 
   @override

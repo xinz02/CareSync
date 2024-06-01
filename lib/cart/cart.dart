@@ -80,7 +80,7 @@ class _CartPageState extends State<CartPage> {
       total += _calculateSubtotal(item.menuItem.price, item.quantity);
     }
     setState(() {
-      gst = total * 0.05;
+      gst = 0;
     });
     // return price * 0.05;
   }
@@ -91,7 +91,7 @@ class _CartPageState extends State<CartPage> {
       total += _calculateSubtotal(item.menuItem.price, item.quantity);
     }
     setState(() {
-      serviceTax = total * 0.05;
+      serviceTax = 0;
     });
     // return price * 0.05;
   }

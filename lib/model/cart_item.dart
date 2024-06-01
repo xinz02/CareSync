@@ -66,15 +66,45 @@
 //     );
 //   }
 // }
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:onlyu_cafe/model/menu_item.dart';
+import 'package:onlyu_cafe/model/menu_item.dart' as menu_model;
 
 class CartItem {
-  late MenuItem menuItem;
+  menu_model.MenuItem menuItem;
   int quantity;
 
-  CartItem({required this.menuItem, this.quantity = 1});
+  CartItem({required this.menuItem, required this.quantity});
+
+  // Convert CartItem to a map
+  Map<String, dynamic> toMap() {
+    return {
+      'ItemID': menuItem.id,
+      'name': menuItem.name,
+      'description': menuItem.description,
+      'price': menuItem.price,
+      'imageUrl': menuItem.imageUrl,
+      'isAvailable': menuItem.isAvailable,
+      'category': menuItem.category,
+      'quantity': quantity,
+    };
+  }
+
+  factory CartItem.fromMap(Map<String, dynamic> map) {
+    return CartItem(
+      menuItem: menu_model.MenuItem(
+        id: map['ItemID'],
+        name: map['name'] ?? '',
+        description: map['description'] ?? '',
+        price: map['price'] ?? 0.0,
+        imageUrl: map['imageUrl'] ?? '',
+        isAvailable: map['isAvailable'] ?? true,
+        category: map['category'] ?? '',
+      ),
+      quantity: map['quantity'] ?? 0,
+    );
+  }
+}
+
+
 
   // factory CartItem.fromDocument(DocumentSnapshot doc) {
   //   return CartItem(
@@ -87,4 +117,3 @@ class CartItem {
   //     category: doc['category'],
   //   );
   // }
-}

@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:onlyu_cafe/model/cart_item.dart';
-import 'package:onlyu_cafe/model/menu_item.dart';
+import 'package:onlyu_cafe/model/menu_item.dart' as menu_model;
 
 class CartService {
   List<CartItem> cartItems = [];
@@ -9,7 +9,6 @@ class CartService {
 
   CartService();
 
-  // List<CartItem> get getCartList => cartList;
   Future<void> addtoCart(String itemID) async {
     DocumentSnapshot<Map<String, dynamic>> docSnapshot =
         await FirebaseFirestore.instance.collection('cart').doc(userId).get();
@@ -67,7 +66,7 @@ class CartService {
 
         if (items.exists) {
           Map<String, dynamic> itemData = items.data()!;
-          MenuItem menuItem = MenuItem(
+          menu_model.MenuItem menuItem = menu_model.MenuItem(
               id: items.id,
               name: items['name'] ?? '',
               description: items['description'] ?? '',
@@ -111,30 +110,6 @@ class CartService {
     }
   }
 
-  // Future<int> getItemQuantity() async {
-  //   try {
-  //     DocumentSnapshot<Map<String, dynamic>> docSnapShot =
-  //         await FirebaseFirestore.instance.collection('cart').doc(userId).get();
-
-  //     if (docSnapShot.exists && docSnapShot.data() != null) {
-  //       Map<String, dynamic> data = docSnapShot.data()!;
-  //       List<dynamic> cartList = data['cartList'];
-
-  //       int totalQuantity = 0;
-
-  //       for (var item in cartList) {
-  //         totalQuantity += (item['quantity'] as num).toInt();
-  //       }
-
-  //       return totalQuantity;
-  //     } else {
-  //       return 0;
-  //     }
-  //   } catch (e) {
-  //     print('Error fetching cart items: $e');
-  //     return 0;
-  //   }
-  // }
   Future<int> getItemQuantity() async {
     try {
       DocumentSnapshot<Map<String, dynamic>> docSnapShot =
@@ -157,6 +132,15 @@ class CartService {
     } catch (e) {
       print('Error fetching cart items: $e');
       return 0;
+    }
+  }
+
+  Future<void> clearCart() async {
+    try {
+      await FirebaseFirestore.instance.collection('cart').doc(userId).delete();
+      cartItems.clear();
+    } catch (e) {
+      print('Error clearing cart: $e');
     }
   }
 

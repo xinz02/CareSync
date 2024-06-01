@@ -66,6 +66,7 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
 class MenuItem {
   String id;
   String name;
