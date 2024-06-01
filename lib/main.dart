@@ -6,6 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:onlyu_cafe/home.dart';
 import 'package:onlyu_cafe/product_management/menu.dart';
+import 'package:onlyu_cafe/service/cart_service.dart';
 import 'package:onlyu_cafe/user_management/firebase_options.dart';
 import 'package:onlyu_cafe/user_management/login.dart';
 import 'package:onlyu_cafe/user_management/profile.dart';
@@ -52,7 +53,15 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
-  String _orderType = '';
+  // String _orderType = '';
+  int _itemQuantity = 0;
+  late Stream<DocumentSnapshot<Map<String, dynamic>>> _cartStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCartQuantity();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -66,8 +75,36 @@ class _MainPageState extends State<MainPage> {
   void _navigateToMenu(String orderType) {
     setState(() {
       _selectedIndex = 1; // Switch to the Menu tab
-      _orderType = orderType; // Set the order type
+      // _orderType = orderType; // Set the order type
     });
+  }
+
+  Future<void> _fetchCartQuantity() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      CartService cartService = CartService();
+      _cartStream = cartService.getCartStream();
+      _cartStream.listen((docSnapshot) {
+        if (docSnapshot.exists && docSnapshot.data() != null) {
+          Map<String, dynamic> data = docSnapshot.data()!;
+          List<dynamic> cartList = data['cartList'];
+
+          int totalQuantity = 0;
+
+          for (var item in cartList) {
+            totalQuantity += (item['quantity'] as num).toInt();
+          }
+
+          setState(() {
+            _itemQuantity = totalQuantity;
+          });
+        } else {
+          setState(() {
+            _itemQuantity = 0;
+          });
+        }
+      });
+    }
   }
 
   @override
@@ -82,35 +119,36 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: const Color.fromARGB(255, 229, 202, 195),
         actions: <Widget>[
           ElevatedButton(
-              onPressed: () {
-                if (!isAuthenticated()) {
-                  context.go("/login");
-                } else {
-                  context.push("/cart");
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 229, 202, 195),
-                padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(0)),
+            onPressed: () {
+              if (!isAuthenticated()) {
+                context.go("/login");
+              } else {
+                context.push("/cart");
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 229, 202, 195),
+              padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(0)),
+            ),
+            child: badges.Badge(
+              position: badges.BadgePosition.topEnd(top: -10, end: -10),
+              badgeContent: Text(
+                '$_itemQuantity',
+                style: TextStyle(fontSize: 10, color: Colors.white),
               ),
-              child: badges.Badge(
-                position: badges.BadgePosition.topEnd(top: -10, end: -10),
-                badgeContent: const Text(
-                  "3",
-                  style: TextStyle(fontSize: 10, color: Colors.white),
-                ),
-                child: const Icon(Icons.shopping_cart),
-              )),
+              child: const Icon(Icons.shopping_cart),
+            ),
+          ),
         ],
       ),
       body: IndexedStack(
         index: _selectedIndex,
         children: [
           HomePage(onButtonPressed: _navigateToMenu),
-          MenuPage(orderType: _orderType),
+          MenuPage(), //orderType: _orderType),
           const ProfilePage(),
         ],
       ),
@@ -130,87 +168,3 @@ class _MainPageState extends State<MainPage> {
     );
   }
 }
-
-
-
-// class MainPage extends StatefulWidget {
-//   final int tab;
-//   const MainPage({super.key, this.tab = 0});
-
-//   @override
-//   // _MainPageState createState() => _MainPageState();
-//   State<MainPage> createState() => _MainPageState();
-// }
-
-// class _MainPageState extends State<MainPage> {
-//   int selectedIndex = 0;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     selectedIndex = widget.tab;
-//     print("init selected tab: $selectedIndex");
-//   }
-
-//   void _onDestinationSelected(int index) {
-//     setState(() {
-//       selectedIndex = index;
-//       print("onDestination selected: $selectedIndex");
-//       if (selectedIndex == 2 && !isAuthenticated()) {
-//         context.push("/login");
-//         // Login();
-//       }
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     Widget getBodyWidget(int index) {
-//       print("Selected tab in build: $index");
-//       switch (index) {
-//         case 0:
-//           int test = widget.tab;
-//           print("widget.tab : $test");
-//           return const HomePage();
-//         case 1:
-//           int test = widget.tab;
-//           print("widget.tab : $test");
-//           return const MenuPage();
-//         case 2:
-//           int test = widget.tab;
-//           print("widget.tab : $test");
-//           return ProfilePage();
-//         default:
-//           int test = widget.tab;
-//           print("widget.tab : $test");
-//           return const HomePage();
-//       }
-//     }
-
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text(
-//           'Only U Cafe',
-//           style: GoogleFonts.kaushanScript(),
-//         ),
-//         centerTitle: true,
-//         backgroundColor: const Color.fromARGB(255, 229, 202, 195),
-//       ),
-//       body: getBodyWidget(selectedIndex),
-//       // _pages[_selectedIndex],
-//       bottomNavigationBar: NavigationBar(
-//         destinations: const [
-//           NavigationDestination(icon: Icon(Icons.home), label: "Home"),
-//           NavigationDestination(icon: Icon(Icons.menu_book), label: "Menu"),
-//           NavigationDestination(icon: Icon(Icons.person), label: "Profile"),
-//         ],
-//         selectedIndex: selectedIndex,
-//         onDestinationSelected: _onDestinationSelected,
-//         indicatorColor: const Color.fromARGB(255, 229, 202, 195),
-//         animationDuration: const Duration(milliseconds: 1000),
-//         backgroundColor: Colors.white10,
-//         shadowColor: Colors.white30,
-//       ),
-//     );
-//   }
-// }

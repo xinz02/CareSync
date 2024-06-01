@@ -11,8 +11,6 @@ import 'package:onlyu_cafe/user_management/profile.dart';
 import 'package:onlyu_cafe/user_management/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:onlyu_cafe/admin/admin_main.dart';
-import 'package:onlyu_cafe/product_management/menu.dart' as ProductMenu;
-
 
 bool isAuthenticated() {
   // Check if there's a user logged in
@@ -154,7 +152,7 @@ GoRouter goRouter() {
       ),
       GoRoute(
         path: '/menu',
-        builder: (context, state) => const ProductMenu.MenuPage(),
+        builder: (context, state) => const MenuPage(),
       ),
       GoRoute(
         path: '/cart',
