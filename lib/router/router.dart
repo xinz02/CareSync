@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, avoid_print
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +13,7 @@ import 'package:onlyu_cafe/user_management/profile.dart';
 import 'package:onlyu_cafe/user_management/signup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:onlyu_cafe/admin/admin_main.dart';
+
 
 bool isAuthenticated() {
   // Check if there's a user logged in
@@ -168,7 +171,7 @@ GoRouter goRouter() {
       ),
       GoRoute(
         path: '/checkout',
-        builder: (context, state) => const CheckOutPage(),
+        builder: (context, state) => CheckOutPage(),
       ),
       // GoRoute(
       //   path: '/home/:tab',
