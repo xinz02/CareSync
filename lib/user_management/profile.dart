@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:onlyu_cafe/main.dart';
-import 'package:onlyu_cafe/model/cart_item.dart';
+import 'package:onlyu_cafe/order/orderdetails.dart';
 import 'package:onlyu_cafe/router/router.dart';
 import 'package:onlyu_cafe/service/auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -43,20 +43,24 @@ class _ProfilePageState extends State<ProfilePage> {
         final String name = userData.get('name');
         final String email = userData.get('email');
         final String phoneNum = userData.get('phoneNumber') ?? '';
-        setState(() {
-          _username = name;
-          _email = email;
-          _phoneNum = phoneNum;
-        });
+        if (mounted) {
+          setState(() {
+            _username = name;
+            _email = email;
+            _phoneNum = phoneNum;
+          });
+        }
       } else {
         print('User data not found');
       }
     } else {
-      setState(() {
-        _username = 'guest';
-        _email = 'guest@gmail.com';
-        _phoneNum = '0123456789';
-      });
+      if (mounted) {
+        setState(() {
+          _username = 'guest';
+          _email = 'guest@gmail.com';
+          _phoneNum = '0123456789';
+        });
+      }
       print('User not logged in');
     }
   }
@@ -65,15 +69,21 @@ class _ProfilePageState extends State<ProfilePage> {
     final User? user = _auth.currentUser;
 
     if (user != null) {
-      final QuerySnapshot ordersSnapshot = await _firestore
-          .collection('orders')
-          .where('userId', isEqualTo: user.uid)
-          .orderBy('timestamp', descending: true)
-          .get();
+      try {
+        final QuerySnapshot ordersSnapshot = await _firestore
+            .collection('orders')
+            .where('userId', isEqualTo: user.uid)
+            .orderBy('timestamp', descending: true)
+            .get();
 
-      setState(() {
-        _orders = ordersSnapshot.docs;
-      });
+        if (mounted) {
+          setState(() {
+            _orders = ordersSnapshot.docs;
+          });
+        }
+      } catch (error) {
+        print('Failed to get orders: $error');
+      }
     }
   }
 
@@ -169,7 +179,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ? const Center(child: Text("No orders found"))
               : ListView.builder(
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: _orders.length,
                   itemBuilder: (context, index) {
                     final order = _orders[index];
@@ -179,6 +189,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           'Date Placed: ${order['timestamp'].toDate().toString()}'),
                       trailing: Text(
                           'Amount Paid: \$${order['totalAmount'].toStringAsFixed(2)}'),
+                      onTap: () {
+                         Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => OrderDetailsPage(order: order),
+                          ),
+                         );
+                      },
                     );
                   },
                 ),
@@ -223,9 +241,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       .doc(user.uid)
                       .update({'phoneNumber': newPhone});
 
-                  setState(() {
-                    _phoneNum = newPhone;
-                  });
+                  if (mounted) {
+                    setState(() {
+                      _phoneNum = newPhone;
+                    });
+                  }
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -296,8 +316,10 @@ class MyTextBox extends StatelessWidget {
           if (onPressed != null && editable)
             IconButton(
               onPressed: onPressed,
-              icon: const Icon(Icons.edit),
-              color: Colors.grey[400],
+                            icon: const Icon(
+                Icons.edit,
+                color: Colors.grey,
+              ),
             ),
         ],
       ),
