@@ -10,10 +10,10 @@ class AdminMainPage extends StatefulWidget {
   const AdminMainPage({super.key});
 
   @override
-  State<AdminMainPage> createState() => _AdminMainPageState();
+  State<AdminMainPage> createState() => AdminMainPageState();
 }
 
-class _AdminMainPageState extends State<AdminMainPage> {
+class AdminMainPageState extends State<AdminMainPage> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
@@ -37,7 +37,6 @@ class _AdminMainPageState extends State<AdminMainPage> {
             style: ElevatedButton.styleFrom(
               elevation: 0,
               backgroundColor: const Color.fromARGB(255, 229, 202, 195),
-              // padding: const EdgeInsets.symmetric(vertical: 35, horizontal: 52),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
             ),
@@ -52,9 +51,6 @@ class _AdminMainPageState extends State<AdminMainPage> {
       body: IndexedStack(
         index: _selectedIndex,
         children: const [
-          // HomePage(onButtonPressed: _navigateToMenu),
-          // MenuPage(orderType: _orderType),
-          // const ProfilePage(),
           AdminHomePage(),
           AdminMenuPage(),
           AdminSettingPage(),
@@ -74,5 +70,9 @@ class _AdminMainPageState extends State<AdminMainPage> {
         shadowColor: Colors.white30,
       ),
     );
+  }
+
+  void navigateToMenuPage() {
+    _onItemTapped(1);
   }
 }
