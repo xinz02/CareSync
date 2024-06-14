@@ -20,6 +20,7 @@ class _AdminReportPageState extends State<AdminReportPage> {
   double totalRevenue = 0.0;
   double totalRevenueToday = 0.0;
   String selectedFilter = 'All Time';
+  List<String> filters = ['All Time', 'Today', 'This Week', 'This Month'];
 
   @override
   void initState() {
@@ -99,18 +100,6 @@ class _AdminReportPageState extends State<AdminReportPage> {
     });
   }
 
-  Widget _buildFilterButton(String text, String filter) {
-    return ElevatedButton(
-      onPressed: () {
-        fetchOrdersForTimeFrame(filter);
-      },
-      style: ElevatedButton.styleFrom(
-        backgroundColor: selectedFilter == filter ? const Color.fromARGB(255, 195, 133, 134) : null, // Highlight selected button
-      ),
-      child: Text(text),
-    );
-  }
-
   Widget _buildStatCard(String title, String value, IconData icon, VoidCallback onTap) {
     return Card(
       elevation: 4.0,
@@ -137,73 +126,110 @@ class _AdminReportPageState extends State<AdminReportPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Report'),
+        centerTitle: false,
+        elevation: 0,
+        backgroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Wrap(
-                spacing: 8.0,
-                runSpacing: 8.0,
-                alignment: WrapAlignment.center,
-                children: [
-                  _buildFilterButton('All Time', 'All Time'),
-                  _buildFilterButton('Today', 'Today'),
-                  _buildFilterButton('This Week', 'This Week'),
-                  _buildFilterButton('This Month', 'This Month'),
-                ],
-              ),
-              SizedBox(height: 20),
-              _buildStatCard(
-                'Total Orders',
-                selectedFilter == 'All Time' ? '$totalOrders' : (selectedFilter == 'Today' ? '$totalOrdersToday' : '$totalOrders'),
-                Icons.shopping_cart,
-                () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AdminOrderPage()),
-                  );
-                },
-              ),
-              _buildStatCard(
-                'Total Revenue',
-                selectedFilter == 'All Time' ? '\$${totalRevenue.toStringAsFixed(2)}' : (selectedFilter == 'Today' ? '\$${totalRevenueToday.toStringAsFixed(2)}' : '\$${totalRevenue.toStringAsFixed(2)}'),
-                Icons.attach_money,
-                () {
-                  // No action needed for revenue stat card
-                },
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Additional Information',
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-              _buildStatCard(
-                'Total Categories',
-                '$totalCategories',
-                Icons.category,
-                () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AdminCategoryPage()),
-                  );
-                },
-              ),
-              _buildStatCard(
-                'Total Items',
-                '$totalItems',
-                Icons.fastfood,
-                () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AddMenuItemPage()),
-                  );
-                },
-              ),
-            ],
-          ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Filters',
+                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8.0),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.calendar_today, color: Colors.black87),
+                      SizedBox(width: 4.0),
+                      DropdownButton<String>(
+                        value: selectedFilter,
+                        onChanged: (String? newValue) {
+                          if (newValue != null) {
+                            fetchOrdersForTimeFrame(newValue);
+                          }
+                        },
+                        items: filters.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(
+                              value,
+                              style: TextStyle(color: Colors.black87),
+                            ),
+                          );
+                        }).toList(),
+                        underline: Container(),
+                        icon: Icon(Icons.arrow_drop_down, color: Colors.black87),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+            _buildStatCard(
+              'Total Orders',
+              selectedFilter == 'All Time'
+                  ? '$totalOrders'
+                  : (selectedFilter == 'Today' ? '$totalOrdersToday' : '$totalOrders'),
+              Icons.shopping_cart,
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AdminOrderPage()),
+                );
+              },
+            ),
+            _buildStatCard(
+              'Total Revenue',
+              selectedFilter == 'All Time'
+                  ? '\$${totalRevenue.toStringAsFixed(2)}'
+                  : (selectedFilter == 'Today'
+                      ? '\$${totalRevenueToday.toStringAsFixed(2)}'
+                      : '\$${totalRevenue.toStringAsFixed(2)}'),
+              Icons.attach_money,
+              () {
+                // No action needed for revenue stat card
+              },
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Additional Information',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            ),
+            _buildStatCard(
+              'Total Categories',
+              '$totalCategories',
+              Icons.category,
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AdminCategoryPage()),
+                );
+              },
+            ),
+            _buildStatCard(
+              'Total Items',
+              '$totalItems',
+              Icons.fastfood,
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddMenuItemPage()),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
